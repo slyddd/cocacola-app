@@ -5,6 +5,7 @@ import { Providers } from "./providers";
 import { Navbar } from "@/components/navbar";
 import clsx from "clsx";
 import { Aside } from "@/components/aside";
+import { BlurActions } from "@/components/blurActions";
 
 export const metadata: Metadata = {
   title: {
@@ -40,6 +41,7 @@ export default function RootLayout({
       >
         <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
           <div className="relative flex h-screen flex-col bg-gradient-to-t from-primary to-background to-40%">
+            <BlurActions />
             <Navbar />
             <section className="flex h-full">
               <Aside />
