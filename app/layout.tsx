@@ -25,11 +25,11 @@ export const viewport: Viewport = {
   ],
 };
 
-export default function RootLayout({
-  children,
-}: {
+interface RootLayoutProps {
   children: React.ReactNode;
-}) {
+}
+
+export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head />
@@ -40,7 +40,7 @@ export default function RootLayout({
         )}
       >
         <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
-          <div className="relative flex h-screen flex-col bg-gradient-to-t from-primary to-background to-40%">
+          <div className="relative flex h-screen flex-col overflow-clip bg-gradient-to-t from-primary to-background to-40%">
             <BlurActions />
             <Navbar />
             <section className="flex h-full">
