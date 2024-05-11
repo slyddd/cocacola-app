@@ -16,7 +16,6 @@ import { useBlurActions } from "@/context/blurActions";
 
 export const Navbar = () => {
   const { setBlur } = useBlurActions();
-  const refBlur = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -58,11 +57,7 @@ export const Navbar = () => {
       </NavbarContent>
 
       <NavbarContent justify="end">
-        <button
-          className="hover:opacity-70"
-          ref={refBlur}
-          onClick={() => setBlur(true)}
-        >
+        <button className="hover:opacity-70" onClick={() => setBlur(true)}>
           <Kbd keys={["command"]}>k para busqueda y opciones</Kbd>
         </button>
         <ThemeSwitch />

@@ -5,9 +5,22 @@ import { FaPlus, FaSearch } from "react-icons/fa";
 import { TbReportAnalytics } from "react-icons/tb";
 import { motion } from "framer-motion";
 import { useBlurActions } from "@/context/blurActions";
+import { useEffect, useRef } from "react";
 
 export const BlurActions = () => {
-  const { blurState } = useBlurActions();
+  const { blurState, setBlur } = useBlurActions();
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const setFocus = async () => {
+      if (blurState) {
+        await new Promise((resolve) => setTimeout(resolve, 100));
+        inputRef.current?.focus();
+      }
+    };
+
+    setFocus();
+  }, [blurState]);
 
   return (
     <motion.span
@@ -21,6 +34,11 @@ export const BlurActions = () => {
         },
       }}
       transition={{ duration: 0.5 }}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) {
+          setBlur(false);
+        }
+      }}
       className="absolute left-0 top-0 z-50 hidden h-screen w-screen items-end justify-end overflow-clip bg-background/70 p-10 backdrop-blur-xl backdrop-saturate-150"
     >
       <div className="flex flex-col items-end justify-center gap-4">
@@ -49,12 +67,7 @@ export const BlurActions = () => {
           variants={{ open: { x: 0 }, closed: { x: "100vw" } }}
           transition={{ duration: 0.5 }}
         >
-          <Input
-            label="Buscar"
-            className="active:border-none"
-            autoFocus
-            endContent={<FaSearch />}
-          />
+          <Input label="Buscar" ref={inputRef} endContent={<FaSearch />} />
         </motion.div>
       </div>
     </motion.span>
