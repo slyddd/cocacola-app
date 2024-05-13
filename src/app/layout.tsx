@@ -1,7 +1,7 @@
 import "@/styles/globals.css";
 import { Metadata, Viewport } from "next";
 import { fontSans } from "@/config/fonts";
-import { Providers } from "./providers";
+import { Providers } from "../providers/ui";
 import { Navbar } from "@/components/navbar";
 import clsx from "clsx";
 import { Aside } from "@/components/aside";

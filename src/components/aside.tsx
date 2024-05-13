@@ -13,7 +13,7 @@ export const Aside = () => {
         </Tooltip>
       </Link>
 
-      <Link href="/providers" className="hover:opacity-70">
+      <Link href="/distributor" className="hover:opacity-70">
         <Tooltip content="Proveedores" placement="right">
           <FaHandHoldingDroplet />
         </Tooltip>

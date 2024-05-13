@@ -13,11 +13,18 @@ import { useEffect, useRef } from "react";
 import { ThemeSwitch } from "@/components/theme-switch";
 import { Logo } from "@/components/icons";
 import { useBlurActions } from "@/context/blurActions";
+import { enumSections } from "@/config/sections";
+import { useActiveSection } from "@/context/actualSection";
 
 export const Navbar = () => {
   const { setBlur } = useBlurActions();
+  const { actualSection } = useActiveSection();
 
   useEffect(() => {
+    if (actualSection === enumSections._HOME_) {
+      return;
+    }
+
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "k" && e.ctrlKey) {
         e.preventDefault();
@@ -48,7 +55,7 @@ export const Navbar = () => {
       </NavbarContent>
 
       <NavbarContent justify="center">
-        <p>Home</p>
+        <p>{actualSection}</p>
         <Divider orientation="vertical" className="h-1/2" />
         <div className="flex items-center justify-center gap-2">
           <FaUser />
@@ -57,9 +64,13 @@ export const Navbar = () => {
       </NavbarContent>
 
       <NavbarContent justify="end">
-        <button className="hover:opacity-70" onClick={() => setBlur(true)}>
-          <Kbd keys={["command"]}>k para busqueda y opciones</Kbd>
-        </button>
+        {actualSection !== enumSections._HOME_ ? (
+          <button className="hover:opacity-70" onClick={() => setBlur(true)}>
+            <Kbd keys={["command"]}>k para busqueda y opciones</Kbd>
+          </button>
+        ) : (
+          <></>
+        )}
         <ThemeSwitch />
       </NavbarContent>
     </NextUINavbar>
