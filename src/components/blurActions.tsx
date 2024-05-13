@@ -39,7 +39,7 @@ export const BlurActions = () => {
           setBlur(false);
         }
       }}
-      className="absolute left-0 top-0 z-50 hidden h-screen w-screen items-end justify-end overflow-clip bg-background/70 p-10 backdrop-blur-xl backdrop-saturate-150"
+      className="absolute left-0 top-0 z-50 hidden h-screen w-screen items-end justify-end overflow-clip bg-background/50 p-10 backdrop-blur-md backdrop-saturate-150"
     >
       <div className="flex flex-col items-end justify-center gap-4">
         <motion.div

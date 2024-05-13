@@ -20,6 +20,7 @@ module.exports = {
             foreground: "#fff",
             primary: "#2e2323",
             secondary: "#05f",
+            accent: "#8a3636",
           },
         },
         light: {
@@ -28,6 +29,7 @@ module.exports = {
             foreground: "#000",
             primary: "#fed8d8",
             secondary: "#05f",
+            accent: "#d60000",
           },
         },
       },

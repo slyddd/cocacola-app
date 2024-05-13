@@ -66,7 +66,9 @@ export const Navbar = () => {
       <NavbarContent justify="end">
         {actualSection !== enumSections._HOME_ ? (
           <button className="hover:opacity-70" onClick={() => setBlur(true)}>
-            <Kbd keys={["command"]}>k para busqueda y opciones</Kbd>
+            <Kbd className="text-foreground" keys={["command"]}>
+              k para busqueda y opciones
+            </Kbd>
           </button>
         ) : (
           <></>
