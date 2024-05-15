@@ -45,9 +45,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
             <Navbar />
             <section className="flex h-full">
               <Aside />
-              <main className="container mx-auto max-w-7xl flex-grow px-6 pt-16">
-                {children}
-              </main>
+              <main className="w-full px-6 pt-10">{children}</main>
             </section>
           </div>
         </Providers>

@@ -56,11 +56,15 @@ export const Navbar = () => {
 
       <NavbarContent justify="center">
         <p>{actualSection}</p>
-        <Divider orientation="vertical" className="h-1/2" />
-        <div className="flex items-center justify-center gap-2">
-          <FaUser />
-          <p>user</p>
-        </div>
+        {actualSection !== enumSections._HOME_ && (
+          <>
+            <Divider orientation="vertical" className="h-1/2" />
+            <div className="flex items-center justify-center gap-2">
+              <FaUser />
+              <p>user</p>
+            </div>
+          </>
+        )}
       </NavbarContent>
 
       <NavbarContent justify="end">
