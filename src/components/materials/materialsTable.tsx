@@ -11,12 +11,36 @@ import {
 } from "@nextui-org/table";
 import { Tooltip } from "@nextui-org/tooltip";
 import { GiBeerBottle } from "react-icons/gi";
+import { useAsyncList } from "@react-stately/data";
 
 interface RegTableProps {
   registers: Array<any>;
 }
 
 export const MaterialsTable = ({ registers: rows }: RegTableProps) => {
+  let list = useAsyncList({
+    async load() {
+      return { items: rows };
+    },
+
+    async sort({ items, sortDescriptor }) {
+      return {
+        items: items.sort((a, b) => {
+          let first = a[sortDescriptor.column ?? "id"];
+          let second = b[sortDescriptor.column ?? "id"];
+          let cmp =
+            (parseInt(first) || first) < (parseInt(second) || second) ? -1 : 1;
+
+          if (sortDescriptor.direction === "descending") {
+            cmp *= -1;
+          }
+
+          return cmp;
+        }),
+      };
+    },
+  });
+
   return (
     <Tooltip
       content="Doble Click Para Editar"
@@ -37,16 +61,25 @@ export const MaterialsTable = ({ registers: rows }: RegTableProps) => {
         selectionBehavior="replace"
         selectionMode="single"
         onRowAction={(row) => navigate(`/materials/edit/${row}`)}
+        sortDescriptor={list.sortDescriptor}
+        onSortChange={list.sort}
       >
         <TableHeader>
-          <TableColumn key="id">ID</TableColumn>
-          <TableColumn key="name">NOMBRE</TableColumn>
-          <TableColumn key="quantity">CANTIDAD</TableColumn>
-          <TableColumn key="price">PRRECIO</TableColumn>
-          <TableColumn key="actions">{""}</TableColumn>
+          <TableColumn key="id" allowsSorting>
+            ID
+          </TableColumn>
+          <TableColumn key="name" allowsSorting>
+            NOMBRE
+          </TableColumn>
+          <TableColumn key="quantity" allowsSorting>
+            CANTIDAD
+          </TableColumn>
+          <TableColumn key="price" allowsSorting>
+            PRRECIO
+          </TableColumn>
         </TableHeader>
         <TableBody
-          items={rows}
+          items={list.items}
           emptyContent={
             <div className="flex items-center justify-center gap-4">
               <p className="opacity-40">
