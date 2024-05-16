@@ -43,7 +43,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
           <div className="relative flex h-screen flex-col overflow-clip bg-gradient-to-t from-primary to-background to-40%">
             <BlurActions />
             <Navbar />
-            <section className="flex h-full">
+            <section className="flex h-[90vh]">
               <Aside />
               <main className="w-full px-6 pt-10">{children}</main>
             </section>

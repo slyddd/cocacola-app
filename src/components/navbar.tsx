@@ -8,7 +8,7 @@ import NextLink from "next/link";
 import { Kbd } from "@nextui-org/kbd";
 import { Divider } from "@nextui-org/divider";
 import { FaUser } from "react-icons/fa";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 
 import { ThemeSwitch } from "@/components/theme-switch";
 import { Logo } from "@/components/icons";
@@ -44,7 +44,7 @@ export const Navbar = () => {
   });
 
   return (
-    <NextUINavbar maxWidth="xl" position="sticky">
+    <NextUINavbar maxWidth="xl" position="sticky" className="h-[10vh]">
       <NavbarContent justify="start">
         <NavbarBrand as="li" className="max-w-fit gap-3">
           <NextLink className="flex items-center justify-start gap-1" href="/">

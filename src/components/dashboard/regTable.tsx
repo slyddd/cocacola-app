@@ -22,6 +22,7 @@ export const RegTable = ({ registers: rows }: RegTableProps) => {
       classNames={{
         base: "h-[80%] max-h-[85%] overflow-y-scroll",
         table: "h-[80%] max-h-[85%]",
+        thead: "[&>tr>th]:bg-black/10 [&>tr>th]:backdrop-blur-md",
       }}
     >
       <TableHeader>
