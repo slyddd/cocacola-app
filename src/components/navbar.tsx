@@ -18,10 +18,10 @@ import { useActiveSection } from "@/context/actualSection";
 
 export const Navbar = () => {
   const { setBlur } = useBlurActions();
-  const { actualSection } = useActiveSection();
+  const { actualSection, editMode } = useActiveSection();
 
   useEffect(() => {
-    if (actualSection === enumSections._HOME_) {
+    if (actualSection === enumSections._HOME_ || editMode) {
       return;
     }
 
@@ -68,7 +68,7 @@ export const Navbar = () => {
       </NavbarContent>
 
       <NavbarContent justify="end">
-        {actualSection !== enumSections._HOME_ ? (
+        {actualSection !== enumSections._HOME_ && !editMode ? (
           <button className="hover:opacity-70" onClick={() => setBlur(true)}>
             <Kbd className="text-foreground" keys={["command"]}>
               k para busqueda y opciones

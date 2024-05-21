@@ -5,11 +5,14 @@ import { FaPlus, FaSearch } from "react-icons/fa";
 import { TbReportAnalytics } from "react-icons/tb";
 import { motion } from "framer-motion";
 import { useBlurActions } from "@/context/blurActions";
-import { useEffect, useRef } from "react";
+import { Ref, useEffect, useRef } from "react";
+import { navigate } from "@/config/navigate";
 
 export const BlurActions = () => {
   const { blurState, setBlur } = useBlurActions();
   const inputRef = useRef<HTMLInputElement>(null);
+  const actualUrl =
+    typeof window !== "undefined" ? window.location.pathname : "";
 
   useEffect(() => {
     const setFocus = async () => {
@@ -46,7 +49,14 @@ export const BlurActions = () => {
           variants={{ open: { x: 0 }, closed: { x: "100vw" } }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
-          <Button size="sm" endContent={<FaPlus className="text-xl" />}>
+          <Button
+            size="sm"
+            endContent={<FaPlus className="text-xl" />}
+            onPress={() => {
+              setBlur(false);
+              navigate(`${actualUrl}/add`);
+            }}
+          >
             Agregar
           </Button>
         </motion.div>

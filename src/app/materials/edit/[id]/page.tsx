@@ -1,5 +1,7 @@
+import { EditMaterialForm } from "@/components/materials/materialsForms";
+import { enumSections } from "@/config/sections";
 import materials from "@/data/materials.json";
-import { Button } from "@nextui-org/button";
+import { ActiveSectionProvider } from "@/providers/activeSection";
 
 interface Params {
   params: {
@@ -12,11 +14,8 @@ export default function EditMaterial({ params }: Params) {
     (material) => material.id === parseInt(params.id),
   );
   return (
-    <div>
-      <Button>back</Button>
-      <h1>{material?.name}</h1>
-      <p>{material?.quantity}</p>
-      <p>{material?.price}</p>
-    </div>
+    <ActiveSectionProvider section={enumSections._MATERIALS_} editMode>
+      <EditMaterialForm material={material} />
+    </ActiveSectionProvider>
   );
 }

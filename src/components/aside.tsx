@@ -11,46 +11,46 @@ export const Aside = () => {
   const { actualSection } = useActiveSection();
 
   return (
-    <aside className="[&>*:hover]:text-accent flex h-full w-[6%] flex-col items-center justify-between py-20 text-3xl [&>*:hover]:opacity-70 [&>*]:transition-all">
-      <Link href="/materials">
-        <Tooltip content="Materia Prima" placement="right">
+    <aside className="flex h-full w-[6%] flex-col items-center justify-between py-20 text-3xl [&>*:hover]:text-accent [&>*:hover]:opacity-70 [&>*]:transition-all">
+      <Tooltip content="Materia Prima" placement="right">
+        <Link href="/materials">
           <FiPackage
             className={
               actualSection === enumSections._MATERIALS_ ? "text-accent" : ""
             }
           />
-        </Tooltip>
-      </Link>
+        </Link>
+      </Tooltip>
 
-      <Link href="/distributor">
-        <Tooltip content="Proveedores" placement="right">
+      <Tooltip content="Proveedores" placement="right">
+        <Link href="/distributor">
           <FaHandHoldingDroplet
             className={
               actualSection === enumSections._PROVIDERS_ ? "text-accent" : ""
             }
           />
-        </Tooltip>
-      </Link>
+        </Link>
+      </Tooltip>
 
-      <Link href="/transportist">
-        <Tooltip content="Transportistas" placement="right">
+      <Tooltip content="Transportistas" placement="right">
+        <Link href="/transportist">
           <FaTruckFast
             className={
               actualSection === enumSections._TRANSPORTIST_ ? "text-accent" : ""
             }
           />
-        </Tooltip>
-      </Link>
+        </Link>
+      </Tooltip>
 
-      <Link href="/employees">
-        <Tooltip content="Empleados" placement="right">
+      <Tooltip content="Empleados" placement="right">
+        <Link href="/employees">
           <FaUserTie
             className={
               actualSection === enumSections._EMPLOYEES_ ? "text-accent" : ""
             }
           />
-        </Tooltip>
-      </Link>
+        </Link>
+      </Tooltip>
     </aside>
   );
 };

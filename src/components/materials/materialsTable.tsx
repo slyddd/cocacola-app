@@ -12,9 +12,11 @@ import {
 import { Tooltip } from "@nextui-org/tooltip";
 import { GiBeerBottle } from "react-icons/gi";
 import { useAsyncList } from "@react-stately/data";
+import { useActiveSection } from "@/context/actualSection";
+import materials from "@/data/materials.json";
 
 interface RegTableProps {
-  registers: Array<any>;
+  registers: typeof materials;
 }
 
 export const MaterialsTable = ({ registers: rows }: RegTableProps) => {
@@ -26,10 +28,9 @@ export const MaterialsTable = ({ registers: rows }: RegTableProps) => {
     async sort({ items, sortDescriptor }) {
       return {
         items: items.sort((a, b) => {
-          let first = a[sortDescriptor.column ?? "id"];
-          let second = b[sortDescriptor.column ?? "id"];
-          let cmp =
-            (parseInt(first) || first) < (parseInt(second) || second) ? -1 : 1;
+          let first = a[(sortDescriptor.column ?? "id") as keyof typeof a];
+          let second = b[(sortDescriptor.column ?? "id") as keyof typeof b];
+          let cmp = first < second ? -1 : 1;
 
           if (sortDescriptor.direction === "descending") {
             cmp *= -1;
@@ -60,7 +61,9 @@ export const MaterialsTable = ({ registers: rows }: RegTableProps) => {
         aria-label="Materiales en inventario"
         selectionBehavior="replace"
         selectionMode="single"
-        onRowAction={(row) => navigate(`/materials/edit/${row}`)}
+        onRowAction={(row) => {
+          navigate(`/materials/edit/${row}`);
+        }}
         sortDescriptor={list.sortDescriptor}
         onSortChange={list.sort}
       >
