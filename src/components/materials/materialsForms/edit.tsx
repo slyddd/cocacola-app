@@ -7,7 +7,7 @@ import { Input } from "@nextui-org/input";
 import { useForm } from "react-hook-form";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { editSchema } from "@/validations/materialSchema";
+import { materialSchema } from "@/validations/materialSchema";
 
 interface EditProps {
   material: (typeof materials)[0] | undefined;
@@ -20,7 +20,7 @@ export const Edit = ({ material }: EditProps) => {
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(editSchema),
+    resolver: zodResolver(materialSchema),
   });
 
   return (
@@ -51,7 +51,7 @@ export const Edit = ({ material }: EditProps) => {
           onValueChange={(value) =>
             setMaterialData({
               ...materialData,
-              name: value,
+              name: value.toUpperCase(),
             })
           }
           {...register("name")}
@@ -103,9 +103,7 @@ export const Edit = ({ material }: EditProps) => {
           <Button
             type="submit"
             color="success"
-            isDisabled={
-              !!(errors.name || errors.quantity || errors.unit || errors.price)
-            }
+            isDisabled={Object.keys(errors).length > 0}
           >
             Guardar
           </Button>

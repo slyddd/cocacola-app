@@ -6,7 +6,7 @@ import { Input } from "@nextui-org/input";
 import { useForm } from "react-hook-form";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { materialSchema } from "@/validations/materialSchema";
+import { distributorSchema } from "@/validations/distributorSchema";
 
 export const Add = () => {
   const [name, setName] = React.useState("");
@@ -15,13 +15,13 @@ export const Add = () => {
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(materialSchema),
+    resolver: zodResolver(distributorSchema),
   });
 
   return (
     <div className="w-full">
       <Button
-        onClick={() => navigate("/materials")}
+        onClick={() => navigate("/distributor")}
         startContent={<IoMdArrowRoundBack />}
         isIconOnly
       />
@@ -32,33 +32,37 @@ export const Add = () => {
         className="mx-auto mt-5 grid w-full grid-cols-2 gap-5"
       >
         <Input
+          label="DNI"
+          errorMessage={errors.dni?.message as string}
+          isInvalid={!!errors.dni}
+          {...register("dni")}
+        />
+        <Input
           label="Nombre"
-          errorMessage={errors.name?.message as string}
-          isInvalid={!!errors.name}
           value={name}
           onValueChange={(value) => setName(value.toUpperCase())}
+          errorMessage={errors.name?.message as string}
+          isInvalid={!!errors.name}
           {...register("name")}
         />
         <Input
-          label="Cantidad"
-          type="number"
-          errorMessage={errors.quantity?.message as string}
-          isInvalid={!!errors.quantity}
-          {...register("quantity", { valueAsNumber: true })}
+          label="Telefono"
+          errorMessage={errors.phone?.message as string}
+          isInvalid={!!errors.phone}
+          startContent="+57"
+          {...register("phone")}
         />
         <Input
-          label="Unidad"
-          errorMessage={errors.unit?.message as string}
-          isInvalid={!!errors.unit}
-          {...register("unit")}
+          label="Correo"
+          errorMessage={errors.email?.message as string}
+          isInvalid={!!errors.email}
+          {...register("email")}
         />
         <Input
-          label="Precio"
-          type="number"
-          errorMessage={errors.price?.message as string}
-          isInvalid={!!errors.price}
-          startContent="$"
-          {...register("price", { valueAsNumber: true })}
+          label="NIT"
+          errorMessage={errors.nit?.message as string}
+          isInvalid={!!errors.nit}
+          {...register("nit")}
         />
         <div className="col-span-2 flex">
           <Button
@@ -67,7 +71,7 @@ export const Add = () => {
             className="ml-auto"
             isDisabled={Object.keys(errors).length > 0}
           >
-            Añadir
+            Guardar
           </Button>
         </div>
       </form>
