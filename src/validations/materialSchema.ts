@@ -11,9 +11,19 @@ export const editSchema = z.object({
     .min(0, {
       message: "La cantidad no puede ser menor a 0",
     }),
-  unit: z.string().min(1, {
-    message: "La unidad debe tener al menos 1 caracter",
-  }),
+  unit: z
+    .string()
+    .min(1, {
+      message: "La unidad debe tener al menos 1 caracter",
+    })
+    .refine(
+      (value) => {
+        return /^[a-zA-Z]+$/.test(value);
+      },
+      {
+        message: "La unidad debe contener solo letras",
+      },
+    ),
   price: z
     .number({
       message: "El precio debe ser un número",
