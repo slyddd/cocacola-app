@@ -1,0 +1,182 @@
+[
+  {
+    "id": 1,
+    "dni": "123456789",
+    "name": "John Doe",
+    "phone": "123-456-7890",
+    "email": "johndoe@example.com",
+    "age": 30,
+    "salary": 50000
+  },
+  {
+    "id": 2,
+    "dni": "987654321",
+    "name": "Jane Smith",
+    "phone": "987-654-3210",
+    "email": "janesmith@example.com",
+    "age": 35,
+    "salary": 60000
+  },
+  {
+    "id": 3,
+    "dni": "111111111",
+    "name": "Alice Johnson",
+    "phone": "111-111-1111",
+    "email": "alicejohnson@example.com",
+    "age": 25,
+    "salary": 45000
+  },
+  {
+    "id": 4,
+    "dni": "222222222",
+    "name": "Bob Williams",
+    "phone": "222-222-2222",
+    "email": "bobwilliams@example.com",
+    "age": 40,
+    "salary": 70000
+  },
+  {
+    "id": 5,
+    "dni": "333333333",
+    "name": "Sarah Davis",
+    "phone": "333-333-3333",
+    "email": "sarahdavis@example.com",
+    "age": 28,
+    "salary": 55000
+  },
+  {
+    "id": 6,
+    "dni": "444444444",
+    "name": "Michael Johnson",
+    "phone": "444-444-4444",
+    "email": "michaeljohnson@example.com",
+    "age": 32,
+    "salary": 60000
+  },
+  {
+    "id": 7,
+    "dni": "555555555",
+    "name": "Emily Wilson",
+    "phone": "555-555-5555",
+    "email": "emilywilson@example.com",
+    "age": 27,
+    "salary": 50000
+  },
+  {
+    "id": 8,
+    "dni": "666666666",
+    "name": "David Brown",
+    "phone": "666-666-6666",
+    "email": "davidbrown@example.com",
+    "age": 35,
+    "salary": 70000
+  },
+  {
+    "id": 9,
+    "dni": "777777777",
+    "name": "Jennifer Lee",
+    "phone": "777-777-7777",
+    "email": "jenniferlee@example.com",
+    "age": 29,
+    "salary": 55000
+  },
+  {
+    "id": 10,
+    "dni": "888888888",
+    "name": "Christopher Davis",
+    "phone": "888-888-8888",
+    "email": "christopherdavis@example.com",
+    "age": 33,
+    "salary": 60000
+  },
+  {
+    "id": 11,
+    "dni": "999999999",
+    "name": "Jessica Wilson",
+    "phone": "999-999-9999",
+    "email": "jessicawilson@example.com",
+    "age": 26,
+    "salary": 50000
+  },
+  {
+    "id": 12,
+    "dni": "101010101",
+    "name": "Matthew Brown",
+    "phone": "101-010-1010",
+    "email": "matthewbrown@example.com",
+    "age": 34,
+    "salary": 70000
+  },
+  {
+    "id": 13,
+    "dni": "121212121",
+    "name": "Olivia Johnson",
+    "phone": "121-212-1212",
+    "email": "oliviajohnson@example.com",
+    "age": 31,
+    "salary": 55000
+  },
+  {
+    "id": 14,
+    "dni": "131313131",
+    "name": "Andrew Smith",
+    "phone": "131-313-1313",
+    "email": "andrewsmith@example.com",
+    "age": 28,
+    "salary": 60000
+  },
+  {
+    "id": 15,
+    "dni": "141414141",
+    "name": "Sophia Davis",
+    "phone": "141-414-1414",
+    "email": "sophiadavis@example.com",
+    "age": 27,
+    "salary": 50000
+  },
+  {
+    "id": 16,
+    "dni": "151515151",
+    "name": "Daniel Johnson",
+    "phone": "151-515-1515",
+    "email": "danieljohnson@example.com",
+    "age": 35,
+    "salary": 70000
+  },
+  {
+    "id": 17,
+    "dni": "161616161",
+    "name": "Mia Wilson",
+    "phone": "161-616-1616",
+    "email": "miawilson@example.com",
+    "age": 30,
+    "salary": 55000
+  },
+  {
+    "id": 18,
+    "dni": "171717171",
+    "name": "Ethan Brown",
+    "phone": "171-717-1717",
+    "email": "ethanbrown@example.com",
+    "age": 32,
+    "salary": 60000
+  },
+  {
+    "id": 19,
+    "dni": "181818181",
+    "name": "Ava Johnson",
+    "phone": "181-818-1818",
+    "email": "avajohnson@example.com",
+    "age": 29,
+    "salary": 50000
+  },
+  {
+    "id": 20,
+    "dni": "191919191",
+    "name": "William Smith",
+    "phone": "191-919-1919",
+    "email": "williamsmith@example.com",
+    "age": 33,
+    "salary": 70000
+  }
+]

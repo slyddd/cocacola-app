@@ -6,27 +6,27 @@ import { Input } from "@nextui-org/input";
 import { useForm } from "react-hook-form";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { zodResolver } from "@hookform/resolvers/zod";
-import distributors from "@/data/distributors.json";
-import { distributorSchema } from "@/validations/distributorSchema";
+import employees from "@/data/employees.json";
+import { employeeSchema } from "@/validations/employeeSchema";
 
 interface EditProps {
-  distributor: (typeof distributors)[0] | undefined;
+  employee: (typeof employees)[0] | undefined;
 }
 
-export const Edit = ({ distributor }: EditProps) => {
-  const [distributorData, setDistributorData] = React.useState(distributor!);
+export const Edit = ({ employee }: EditProps) => {
+  const [employeeData, setEmployeeData] = React.useState(employee!);
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(distributorSchema),
+    resolver: zodResolver(employeeSchema),
   });
 
   return (
     <div className="w-full">
       <Button
-        onClick={() => navigate("/distributor")}
+        onClick={() => navigate("/employees")}
         startContent={<IoMdArrowRoundBack />}
         isIconOnly
       />
@@ -38,19 +38,19 @@ export const Edit = ({ distributor }: EditProps) => {
       >
         <Input
           label="ID (No editable)"
-          value={`${distributor?.id}` ?? ""}
+          value={`${employee?.id}` ?? ""}
           readOnly
           disabled
           className="opacity-50"
         />
         <Input
           label="DNI"
-          value={distributorData?.dni}
+          value={employeeData?.dni}
           errorMessage={errors.dni?.message as string}
           isInvalid={!!errors.dni}
           onValueChange={(value) =>
-            setDistributorData({
-              ...distributorData,
+            setEmployeeData({
+              ...employeeData,
               dni: value,
             })
           }
@@ -58,12 +58,12 @@ export const Edit = ({ distributor }: EditProps) => {
         />
         <Input
           label="Nombre"
-          value={distributorData?.name}
+          value={employeeData?.name}
           errorMessage={errors.name?.message as string}
           isInvalid={!!errors.name}
           onValueChange={(value) =>
-            setDistributorData({
-              ...distributorData,
+            setEmployeeData({
+              ...employeeData,
               name: value.toUpperCase(),
             })
           }
@@ -71,13 +71,13 @@ export const Edit = ({ distributor }: EditProps) => {
         />
         <Input
           label="Telefono"
-          value={distributorData?.phone}
+          value={employeeData?.phone}
           errorMessage={errors.phone?.message as string}
           isInvalid={!!errors.phone}
           startContent="+57"
           onValueChange={(value) =>
-            setDistributorData({
-              ...distributorData,
+            setEmployeeData({
+              ...employeeData,
               phone: value,
             })
           }
@@ -85,29 +85,45 @@ export const Edit = ({ distributor }: EditProps) => {
         />
         <Input
           label="Correo"
-          value={distributorData?.email}
+          value={employeeData?.email}
           errorMessage={errors.email?.message as string}
           isInvalid={!!errors.email}
           onValueChange={(value) =>
-            setDistributorData({
-              ...distributorData,
+            setEmployeeData({
+              ...employeeData,
               email: value,
             })
           }
           {...register("email")}
         />
         <Input
-          label="NIT"
-          value={distributorData?.nit}
-          errorMessage={errors.nit?.message as string}
-          isInvalid={!!errors.nit}
+          label="Edad"
+          type="number"
+          value={`${employeeData?.age}`}
+          errorMessage={errors.age?.message as string}
+          isInvalid={!!errors.age}
           onValueChange={(value) =>
-            setDistributorData({
-              ...distributorData,
-              nit: value,
+            setEmployeeData({
+              ...employeeData,
+              age: parseInt(value),
             })
           }
-          {...register("nit")}
+          {...register("age", { valueAsNumber: true })}
+        />
+        <Input
+          label="Salario"
+          type="number"
+          value={`${employeeData?.salary}`}
+          startContent="$"
+          errorMessage={errors.salary?.message as string}
+          isInvalid={!!errors.salary}
+          onValueChange={(value) =>
+            setEmployeeData({
+              ...employeeData,
+              salary: parseInt(value),
+            })
+          }
+          {...register("salary", { valueAsNumber: true })}
         />
         <div className="col-span-2 flex justify-between">
           <Button color="danger">Eliminar</Button>

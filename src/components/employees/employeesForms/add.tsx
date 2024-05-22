@@ -6,7 +6,7 @@ import { Input } from "@nextui-org/input";
 import { useForm } from "react-hook-form";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { distributorSchema } from "@/validations/distributorSchema";
+import { employeeSchema } from "@/validations/employeeSchema";
 
 export const Add = () => {
   const [name, setName] = React.useState("");
@@ -15,13 +15,13 @@ export const Add = () => {
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(distributorSchema),
+    resolver: zodResolver(employeeSchema),
   });
 
   return (
     <div className="w-full">
       <Button
-        onClick={() => navigate("/distributor")}
+        onClick={() => navigate("/employees")}
         startContent={<IoMdArrowRoundBack />}
         isIconOnly
       />
@@ -59,10 +59,19 @@ export const Add = () => {
           {...register("email")}
         />
         <Input
-          label="NIT"
-          errorMessage={errors.nit?.message as string}
-          isInvalid={!!errors.nit}
-          {...register("nit")}
+          label="Edad"
+          type="number"
+          errorMessage={errors.age?.message as string}
+          isInvalid={!!errors.age}
+          {...register("age", { valueAsNumber: true })}
+        />
+        <Input
+          label="Salario"
+          type="number"
+          errorMessage={errors.salary?.message as string}
+          isInvalid={!!errors.salary}
+          startContent="$"
+          {...register("salary", { valueAsNumber: true })}
         />
         <div className="col-span-2 flex">
           <Button

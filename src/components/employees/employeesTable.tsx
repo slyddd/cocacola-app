@@ -12,16 +12,20 @@ import {
 import { Tooltip } from "@nextui-org/tooltip";
 import { GiBeerBottle } from "react-icons/gi";
 import { useAsyncList } from "@react-stately/data";
-import distributors from "@/data/distributors.json";
+import employees from "@/data/employees.json";
 
 interface RegTableProps {
-  registers: typeof distributors;
+  registers: typeof employees;
 }
 
-export const DistributorsTable = ({ registers: rows }: RegTableProps) => {
+export const EmployeesTable = ({ registers: rows }: RegTableProps) => {
+  const modRows = rows.map((row) => ({
+    ...row,
+    salary: `$${row.salary}`,
+  }));
   let list = useAsyncList({
     async load() {
-      return { items: rows };
+      return { items: modRows };
     },
 
     async sort({ items, sortDescriptor }) {
@@ -61,7 +65,7 @@ export const DistributorsTable = ({ registers: rows }: RegTableProps) => {
         selectionBehavior="replace"
         selectionMode="single"
         onRowAction={(row) => {
-          navigate(`/distributor/edit/${row}`);
+          navigate(`/employees/edit/${row}`);
         }}
         sortDescriptor={list.sortDescriptor}
         onSortChange={list.sort}
@@ -78,8 +82,11 @@ export const DistributorsTable = ({ registers: rows }: RegTableProps) => {
           </TableColumn>
           <TableColumn key="phone">TELEFONO</TableColumn>
           <TableColumn key="email">CORREO</TableColumn>
-          <TableColumn key="nit" allowsSorting>
-            NIT
+          <TableColumn key="age" allowsSorting>
+            EDAD
+          </TableColumn>
+          <TableColumn key="salary" allowsSorting>
+            SALARIO
           </TableColumn>
         </TableHeader>
         <TableBody
@@ -87,7 +94,7 @@ export const DistributorsTable = ({ registers: rows }: RegTableProps) => {
           emptyContent={
             <div className="flex items-center justify-center gap-4">
               <p className="opacity-40">
-                Aun no hay proveedores en el inventario.
+                Aun no hay empleados en el inventario.
               </p>
               <GiBeerBottle className="text-2xl opacity-40" />
             </div>

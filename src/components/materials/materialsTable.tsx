@@ -12,7 +12,6 @@ import {
 import { Tooltip } from "@nextui-org/tooltip";
 import { GiBeerBottle } from "react-icons/gi";
 import { useAsyncList } from "@react-stately/data";
-import { useActiveSection } from "@/context/actualSection";
 import materials from "@/data/materials.json";
 
 interface RegTableProps {
@@ -20,9 +19,15 @@ interface RegTableProps {
 }
 
 export const MaterialsTable = ({ registers: rows }: RegTableProps) => {
+  const modRows = rows.map((row) => ({
+    ...row,
+    price: `$${row.price}`,
+    quantity: `${row.quantity} ${row.unit}`,
+  }));
+
   let list = useAsyncList({
     async load() {
-      return { items: rows };
+      return { items: modRows };
     },
 
     async sort({ items, sortDescriptor }) {
