@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/libs/prisma";
-import { materialSchema } from "@/validations/materialSchema";
+import { distributorSchema } from "@/validations/distributorSchema";
 
 interface Params {
   params: {
@@ -38,18 +38,29 @@ export async function GET(request: NextRequest, { params }: Params) {
 
 export async function PUT(request: NextRequest, { params }: Params) {
   const body = await request.json();
-  const validation = materialSchema.safeParse(body);
+  const validation = distributorSchema.safeParse(body);
 
   if (!validation.success) {
     return NextResponse.json(validation.error.format(), { status: 400 });
   }
 
   try {
-    const material = await prisma.materials.update({
+    const distributor = await prisma.distributor.update({
       where: { id: params.id },
-      data: body,
+      include: { person: true },
+      data: {
+        nit: body.nit,
+        person: {
+          update: {
+            dni: body.dni,
+            name: body.name,
+            phone: body.phone,
+            email: body.email,
+          },
+        },
+      },
     });
-    return NextResponse.json(material);
+    return NextResponse.json(distributor);
   } catch (error) {
     if (error instanceof Error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
@@ -58,17 +69,24 @@ export async function PUT(request: NextRequest, { params }: Params) {
 }
 
 export async function DELETE(request: NextRequest, { params }: Params) {
-  const material = await prisma.materials.findUnique({
+  const distributor = await prisma.distributor.findUnique({
     where: { id: params.id },
+    include: { person: true },
   });
 
-  if (!material) {
-    return NextResponse.json({ error: "Material not found" }, { status: 404 });
+  if (!distributor) {
+    return NextResponse.json(
+      { error: "Distributor not found" },
+      { status: 404 },
+    );
   }
 
   try {
-    await prisma.materials.delete({ where: { id: params.id } });
-    return NextResponse.json(material);
+    await prisma.distributor.delete({
+      where: { id: params.id },
+      include: { person: true },
+    });
+    return NextResponse.json(distributor);
   } catch (error) {
     if (error instanceof Error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
