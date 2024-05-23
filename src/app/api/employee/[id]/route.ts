@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/libs/prisma";
-import { distributorSchema } from "@/validations/distributorSchema";
+import { employeeSchema } from "@/validations/employeeSchema";
 
 interface Params {
   params: {
@@ -10,22 +10,24 @@ interface Params {
 
 export async function GET(request: NextRequest, { params }: Params) {
   try {
-    const distributor = await prisma.distributor.findUnique({
+    const employee = await prisma.employee.findUnique({
       where: { id: params.id },
       include: { person: true },
     });
 
-    if (!distributor) {
+    if (!employee) {
       return NextResponse.json(
-        { error: "Distributor not found" },
+        { error: "Employee not found" },
         { status: 404 },
       );
     }
 
     const result = {
-      ...distributor,
+      ...employee,
+      ...employee.person,
+      bornDate: undefined,
       person: undefined,
-      ...distributor.person,
+      age: new Date().getFullYear() - new Date(employee.bornDate).getFullYear(),
     };
 
     return NextResponse.json(result);
@@ -38,18 +40,21 @@ export async function GET(request: NextRequest, { params }: Params) {
 
 export async function PUT(request: NextRequest, { params }: Params) {
   const body = await request.json();
-  const validation = distributorSchema.safeParse(body);
+  const validation = employeeSchema.safeParse(body);
 
   if (!validation.success) {
     return NextResponse.json(validation.error.format(), { status: 400 });
   }
 
   try {
-    const distributor = await prisma.distributor.update({
+    const bornYear = new Date().getFullYear() - body.age;
+    const dateYear = new Date().setFullYear(bornYear);
+    const employee = await prisma.employee.update({
       where: { id: params.id },
       include: { person: true },
       data: {
-        nit: body.nit,
+        bornDate: new Date(dateYear),
+        salary: body.salary,
         person: {
           update: {
             dni: body.dni,
@@ -60,7 +65,7 @@ export async function PUT(request: NextRequest, { params }: Params) {
         },
       },
     });
-    return NextResponse.json(distributor);
+    return NextResponse.json(employee);
   } catch (error) {
     if (error instanceof Error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
@@ -69,28 +74,26 @@ export async function PUT(request: NextRequest, { params }: Params) {
 }
 
 export async function DELETE(request: NextRequest, { params }: Params) {
-  const distributor = await prisma.distributor.findUnique({
+  const employee = await prisma.employee.findUnique({
     where: { id: params.id },
     include: { person: true },
   });
 
-  if (!distributor) {
-    return NextResponse.json(
-      { error: "Distributor not found" },
-      { status: 404 },
-    );
+  if (!employee) {
+    return NextResponse.json({ error: "Employee not found" }, { status: 404 });
   }
 
   try {
-    await prisma.distributor.delete({
+    await prisma.employee.delete({
       where: { id: params.id },
+      include: { person: true },
     });
 
     await prisma.person.delete({
-      where: { dni: distributor.person.dni },
+      where: { dni: employee.person.dni },
     });
 
-    return NextResponse.json(distributor);
+    return NextResponse.json(employee);
   } catch (error) {
     if (error instanceof Error) {
       return NextResponse.json({ error: error.message }, { status: 500 });

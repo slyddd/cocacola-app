@@ -84,12 +84,8 @@ export async function DELETE(request: NextRequest, { params }: Params) {
   try {
     await prisma.distributor.delete({
       where: { id: params.id },
+      include: { person: true },
     });
-
-    await prisma.person.delete({
-      where: { dni: distributor.person.dni },
-    });
-
     return NextResponse.json(distributor);
   } catch (error) {
     if (error instanceof Error) {
