@@ -13,16 +13,20 @@ import { Tooltip } from "@nextui-org/tooltip";
 import { GiBeerBottle } from "react-icons/gi";
 import { useAsyncList } from "@react-stately/data";
 import employees from "@/data/employees.json";
+import { useActualFilter } from "@/context/actualFIlter";
+import { filterItems } from "@/libs/filterItems";
 
 interface RegTableProps {
   registers: typeof employees;
 }
 
 export const EmployeesTable = ({ registers: rows }: RegTableProps) => {
+  const { actualFilter, actualColumn } = useActualFilter();
   const modRows = rows.map((row) => ({
     ...row,
     salary: `$${row.salary}`,
   }));
+
   let list = useAsyncList({
     async load() {
       return { items: modRows };
@@ -57,8 +61,8 @@ export const EmployeesTable = ({ registers: rows }: RegTableProps) => {
         isHeaderSticky
         removeWrapper
         classNames={{
-          base: "h-[90%] max-h-[95%] overflow-y-scroll",
-          table: "h-[90%] max-h-[95%]",
+          base: "max-h-[90%] overflow-y-scroll",
+          table: "max-h-[90%]",
           thead: "[&>tr>th]:bg-black/10 [&>tr>th]:backdrop-blur-md",
         }}
         aria-label="Proveedores en inventario"
@@ -90,7 +94,7 @@ export const EmployeesTable = ({ registers: rows }: RegTableProps) => {
           </TableColumn>
         </TableHeader>
         <TableBody
-          items={list.items}
+          items={filterItems(list.items, actualFilter, actualColumn)}
           emptyContent={
             <div className="flex items-center justify-center gap-4">
               <p className="opacity-40">

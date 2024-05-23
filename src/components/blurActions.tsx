@@ -7,9 +7,13 @@ import { motion } from "framer-motion";
 import { useBlurActions } from "@/context/blurActions";
 import { Ref, useEffect, useRef } from "react";
 import { navigate } from "@/config/navigate";
+import { useActualFilter } from "@/context/actualFIlter";
+import { Chip } from "@nextui-org/chip";
 
 export const BlurActions = () => {
   const { blurState, setBlur } = useBlurActions();
+  const { actualFilter, actualColumn, setActualFilter, setActualColumn } =
+    useActualFilter();
   const inputRef = useRef<HTMLInputElement>(null);
   const actualUrl =
     typeof window !== "undefined" ? window.location.pathname : "";
@@ -77,7 +81,37 @@ export const BlurActions = () => {
           variants={{ open: { x: 0 }, closed: { x: "100vw" } }}
           transition={{ duration: 0.5 }}
         >
-          <Input label="Buscar" ref={inputRef} endContent={<FaSearch />} />
+          <Input
+            label="Buscar"
+            labelPlacement="outside"
+            ref={inputRef}
+            endContent={<FaSearch />}
+            startContent={
+              actualColumn ? (
+                <Chip color="danger" className="text-white">
+                  {actualColumn}
+                </Chip>
+              ) : null
+            }
+            onValueChange={(value) => {
+              if (value.includes(":")) {
+                const [column, filter] = value.split(":");
+                setActualColumn(column);
+                setActualFilter(filter);
+                return;
+              }
+              setActualFilter(value);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Backspace" && actualFilter === "") {
+                setActualColumn("");
+              }
+              if (e.key === "Enter" || e.key === "Escape") {
+                setBlur(false);
+              }
+            }}
+            value={actualFilter}
+          />
         </motion.div>
       </div>
     </motion.span>

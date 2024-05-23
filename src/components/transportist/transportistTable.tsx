@@ -11,17 +11,23 @@ import {
 } from "@nextui-org/table";
 import { Tooltip } from "@nextui-org/tooltip";
 import { GiBeerBottle } from "react-icons/gi";
-import { useAsyncList } from "@react-stately/data";
 import transportist from "@/data/transportist.json";
+import { useAsyncList } from "@react-stately/data";
+import { useActualFilter } from "@/context/actualFIlter";
+import { filterItems } from "@/libs/filterItems";
 
 interface RegTableProps {
   registers: typeof transportist;
 }
 
 export const TransportistTable = ({ registers: rows }: RegTableProps) => {
-  let list = useAsyncList({
+  const { actualFilter, actualColumn } = useActualFilter();
+
+  let list = useAsyncList<(typeof transportist)[0]>({
     async load() {
-      return { items: rows };
+      return {
+        items: rows,
+      };
     },
 
     async sort({ items, sortDescriptor }) {
@@ -53,8 +59,8 @@ export const TransportistTable = ({ registers: rows }: RegTableProps) => {
         isHeaderSticky
         removeWrapper
         classNames={{
-          base: "h-[90%] max-h-[95%] overflow-y-scroll",
-          table: "h-[90%] max-h-[95%]",
+          base: "max-h-[90%] overflow-y-scroll",
+          table: "max-h-[90%]",
           thead: "[&>tr>th]:bg-black/10 [&>tr>th]:backdrop-blur-md",
         }}
         aria-label="Proveedores en inventario"
@@ -67,7 +73,7 @@ export const TransportistTable = ({ registers: rows }: RegTableProps) => {
         onSortChange={list.sort}
       >
         <TableHeader>
-          <TableColumn key="id" allowsSorting>
+          <TableColumn key="id" textValue="id" allowsSorting>
             ID
           </TableColumn>
           <TableColumn key="dni" allowsSorting>
@@ -83,7 +89,7 @@ export const TransportistTable = ({ registers: rows }: RegTableProps) => {
           </TableColumn>
         </TableHeader>
         <TableBody
-          items={list.items}
+          items={filterItems(list.items, actualFilter, actualColumn)}
           emptyContent={
             <div className="flex items-center justify-center gap-4">
               <p className="opacity-40">
