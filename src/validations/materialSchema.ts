@@ -1,9 +1,13 @@
 import { z } from "zod";
 
 export const materialSchema = z.object({
-  name: z.string().min(3, {
-    message: "El nombre debe tener al menos 3 caracteres",
-  }),
+  name: z
+    .string({
+      message: "El nombre es requerido",
+    })
+    .min(3, {
+      message: "El nombre debe tener al menos 3 caracteres",
+    }),
   quantity: z
     .number({
       message: "La cantidad debe ser un número",
@@ -12,7 +16,9 @@ export const materialSchema = z.object({
       message: "La cantidad no puede ser menor a 0",
     }),
   unit: z
-    .string()
+    .string({
+      message: "La unidad es requerida",
+    })
     .min(1, {
       message: "La unidad debe tener al menos 1 caracter",
     })

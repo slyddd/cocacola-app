@@ -29,8 +29,8 @@ export async function GET(request: NextRequest, { params }: Params) {
 }
 
 export async function PUT(request: NextRequest, { params }: Params) {
-  const body = await request.json();
-  const validation = materialSchema.safeParse(body);
+  const body: z.infer<typeof materialSchema> = await request.json();
+  const validation = await materialSchema.safeParseAsync(body);
 
   if (!validation.success) {
     return NextResponse.json(validation.error.format(), { status: 400 });

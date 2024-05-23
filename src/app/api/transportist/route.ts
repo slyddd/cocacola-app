@@ -1,21 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/libs/prisma";
 import { distributorSchema } from "@/validations/distributorSchema";
+import { transportistSchema } from "@/validations/transportistSchema";
+import { z } from "zod";
 
 export async function GET() {
   try {
-    const distributor = await prisma.distributor.findMany({
+    const transportist = await prisma.transportist.findMany({
       include: { person: true },
     });
-    const result = distributor.map((distributor) => {
+    const result = transportist.map((transportist) => {
       return {
-        ...distributor,
+        ...transportist,
+        ...transportist.person,
         person: undefined,
-        ...distributor.person,
       };
     });
     return NextResponse.json({
-      count: distributor.length,
+      count: transportist.length,
       results: result,
     });
   } catch (error) {
@@ -26,21 +28,24 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
-  const body = await request.json();
-  const validation = distributorSchema.safeParse(body);
+  const body: z.infer<typeof transportistSchema> = await request.json();
+  const validation = await transportistSchema.safeParseAsync({
+    ...body,
+    dni: body.dni ?? "",
+  });
 
   if (!validation.success) {
     return NextResponse.json(validation.error.format(), { status: 400 });
   }
 
   try {
-    const distributor = await prisma.distributor.create({
+    const distributor = await prisma.transportist.create({
       include: { person: true },
       data: {
-        nit: body.nit,
+        license: body.license,
         person: {
           create: {
-            dni: body.dni,
+            dni: body.dni || "",
             name: body.name,
             phone: body.phone,
             email: body.email,

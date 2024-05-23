@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/libs/prisma";
 import { distributorSchema } from "@/validations/distributorSchema";
+import { z } from "zod";
 
 interface Params {
   params: {
@@ -37,8 +38,8 @@ export async function GET(request: NextRequest, { params }: Params) {
 }
 
 export async function PUT(request: NextRequest, { params }: Params) {
-  const body = await request.json();
-  const validation = distributorSchema.safeParse(body);
+  const body: z.infer<typeof distributorSchema> = await request.json();
+  const validation = await distributorSchema.safeParseAsync(body);
 
   if (!validation.success) {
     return NextResponse.json(validation.error.format(), { status: 400 });

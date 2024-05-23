@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/libs/prisma";
 import { employeeSchema } from "@/validations/employeeSchema";
+import { z } from "zod";
 
 interface Params {
   params: {
@@ -39,8 +40,8 @@ export async function GET(request: NextRequest, { params }: Params) {
 }
 
 export async function PUT(request: NextRequest, { params }: Params) {
-  const body = await request.json();
-  const validation = employeeSchema.safeParse(body);
+  const body: z.infer<typeof employeeSchema> = await request.json();
+  const validation = await employeeSchema.safeParseAsync(body);
 
   if (!validation.success) {
     return NextResponse.json(validation.error.format(), { status: 400 });

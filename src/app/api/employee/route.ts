@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/libs/prisma";
 import { employeeSchema } from "@/validations/employeeSchema";
+import { z } from "zod";
 
 export async function GET() {
   try {
@@ -29,8 +30,11 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
-  const body = await request.json();
-  const validation = employeeSchema.safeParse(body);
+  const body: z.infer<typeof employeeSchema> = await request.json();
+  const validation = await employeeSchema.safeParseAsync({
+    ...body,
+    dni: body.dni ?? "",
+  });
 
   if (!validation.success) {
     return NextResponse.json(validation.error.format(), { status: 400 });
@@ -46,7 +50,7 @@ export async function POST(request: NextRequest) {
         salary: body.salary,
         person: {
           create: {
-            dni: body.dni,
+            dni: body.dni || "",
             name: body.name,
             phone: body.phone,
             email: body.email,

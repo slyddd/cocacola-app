@@ -1,8 +1,11 @@
 import { z } from "zod";
+import { prisma } from "@/libs/prisma";
 
 export const transportistSchema = z.object({
   dni: z
-    .string()
+    .string({
+      message: "El DNI es requerido",
+    })
     .min(8, {
       message: "El DNI debe tener al menos 8 caracteres",
     })
@@ -16,12 +19,33 @@ export const transportistSchema = z.object({
       {
         message: "El DNI debe contener solo números",
       },
-    ),
-  name: z.string().min(3, {
-    message: "El nombre debe tener al menos 3 caracteres",
-  }),
+    )
+    .refine(
+      async (value) => {
+        const person = await prisma.person.findFirst({
+          where: {
+            dni: value,
+          },
+        });
+
+        return !person;
+      },
+      {
+        message: "El DNI ya está en uso",
+      },
+    )
+    .optional(),
+  name: z
+    .string({
+      message: "El nombre es requerido",
+    })
+    .min(3, {
+      message: "El nombre debe tener al menos 3 caracteres",
+    }),
   phone: z
-    .string()
+    .string({
+      message: "El teléfono es requerido",
+    })
     .min(10, {
       message: "El teléfono debe tener al menos 10 caracteres",
     })
@@ -36,11 +60,17 @@ export const transportistSchema = z.object({
         message: "El teléfono debe contener solo números",
       },
     ),
-  email: z.string().email({
-    message: "El correo debe ser válido",
-  }),
+  email: z
+    .string({
+      message: "El correo es requerido",
+    })
+    .email({
+      message: "El correo debe ser válido",
+    }),
   license: z
-    .string()
+    .string({
+      message: "La licencia es requerida",
+    })
     .min(14, {
       message: "La licencia debe tener al menos 14 caracteres",
     })

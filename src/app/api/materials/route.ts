@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/libs/prisma";
 import { materialSchema } from "@/validations/materialSchema";
+import { z } from "zod";
 
 export async function GET() {
   try {
@@ -14,8 +15,8 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
-  const body = await request.json();
-  const validation = materialSchema.safeParse(body);
+  const body: z.infer<typeof materialSchema> = await request.json();
+  const validation = await materialSchema.safeParseAsync(body);
 
   if (!validation.success) {
     return NextResponse.json(validation.error.format(), { status: 400 });

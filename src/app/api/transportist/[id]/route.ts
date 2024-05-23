@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/libs/prisma";
-import { distributorSchema } from "@/validations/distributorSchema";
+import { z } from "zod";
+import { transportistSchema } from "@/validations/transportistSchema";
 
 interface Params {
   params: {
@@ -10,22 +11,22 @@ interface Params {
 
 export async function GET(request: NextRequest, { params }: Params) {
   try {
-    const distributor = await prisma.distributor.findUnique({
+    const transportist = await prisma.transportist.findUnique({
       where: { id: params.id },
       include: { person: true },
     });
 
-    if (!distributor) {
+    if (!transportist) {
       return NextResponse.json(
-        { error: "Distributor not found" },
+        { error: "Transportist not found" },
         { status: 404 },
       );
     }
 
     const result = {
-      ...distributor,
+      ...transportist,
+      ...transportist.person,
       person: undefined,
-      ...distributor.person,
     };
 
     return NextResponse.json(result);
@@ -37,19 +38,19 @@ export async function GET(request: NextRequest, { params }: Params) {
 }
 
 export async function PUT(request: NextRequest, { params }: Params) {
-  const body = await request.json();
-  const validation = distributorSchema.safeParse(body);
+  const body: z.infer<typeof transportistSchema> = await request.json();
+  const validation = await transportistSchema.safeParseAsync(body);
 
   if (!validation.success) {
     return NextResponse.json(validation.error.format(), { status: 400 });
   }
 
   try {
-    const distributor = await prisma.distributor.update({
+    const transportist = await prisma.transportist.update({
       where: { id: params.id },
       include: { person: true },
       data: {
-        nit: body.nit,
+        license: body.license,
         person: {
           update: {
             dni: body.dni,
@@ -60,7 +61,7 @@ export async function PUT(request: NextRequest, { params }: Params) {
         },
       },
     });
-    return NextResponse.json(distributor);
+    return NextResponse.json(transportist);
   } catch (error) {
     if (error instanceof Error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
@@ -69,24 +70,28 @@ export async function PUT(request: NextRequest, { params }: Params) {
 }
 
 export async function DELETE(request: NextRequest, { params }: Params) {
-  const distributor = await prisma.distributor.findUnique({
+  const transportist = await prisma.transportist.findUnique({
     where: { id: params.id },
     include: { person: true },
   });
 
-  if (!distributor) {
+  if (!transportist) {
     return NextResponse.json(
-      { error: "Distributor not found" },
+      { error: "Transportist not found" },
       { status: 404 },
     );
   }
 
   try {
-    await prisma.distributor.delete({
+    await prisma.transportist.delete({
       where: { id: params.id },
-      include: { person: true },
     });
-    return NextResponse.json(distributor);
+
+    await prisma.person.delete({
+      where: { dni: transportist.person.dni },
+    });
+
+    return NextResponse.json(transportist);
   } catch (error) {
     if (error instanceof Error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
