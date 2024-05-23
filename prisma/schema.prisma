@@ -1,0 +1,81 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Materials {
+  id        String   @id @default(cuid())
+  name      String
+  unit      String
+  price     Float
+  quantity  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Person {
+  dni       String   @id
+  name      String
+  phone     String
+  email     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  distributor  Distributor?
+  employee     Employee?
+  transportist Transportist?
+  Admin        Admin?
+}
+
+model Distributor {
+  id  String @id @default(cuid())
+  dni String @unique
+  nit String
+
+  person Person @relation(fields: [dni], references: [dni])
+}
+
+model Employee {
+  id       String   @id @default(cuid())
+  dni      String   @unique
+  bornDate DateTime
+  salary   Float
+
+  person Person @relation(fields: [dni], references: [dni])
+}
+
+model Transportist {
+  id      String @id @default(cuid())
+  dni     String @unique
+  license String
+
+  person Person @relation(fields: [dni], references: [dni])
+}
+
+model Admin {
+  id       String @id @default(cuid())
+  dni      String @unique
+  password String
+
+  register Register[]
+  person   Person     @relation(fields: [dni], references: [dni])
+}
+
+model Register {
+  id          String   @id @default(cuid())
+  adminId     String
+  description String
+  createdAt   DateTime @default(now())
+
+  admin Admin @relation(fields: [adminId], references: [id])
+}
