@@ -6,15 +6,16 @@ import { Input } from "@nextui-org/input";
 import { useForm } from "react-hook-form";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { zodResolver } from "@hookform/resolvers/zod";
-import distributors from "@/data/distributors.json";
 import { distributorSchema } from "@/validations/distributorSchema";
+import { DistributorInterface } from "@/interfaces/distributorInterface";
+import axios from "axios";
 
 interface EditProps {
-  distributor: (typeof distributors)[0] | undefined;
+  distributor: DistributorInterface;
 }
 
 export const Edit = ({ distributor }: EditProps) => {
-  const [distributorData, setDistributorData] = React.useState(distributor!);
+  const [distributorData, setDistributorData] = React.useState(distributor);
   const {
     register,
     handleSubmit,
@@ -22,6 +23,7 @@ export const Edit = ({ distributor }: EditProps) => {
   } = useForm({
     resolver: zodResolver(distributorSchema),
   });
+  const [loading, setLoading] = React.useState(false);
 
   return (
     <div className="w-full">
@@ -32,33 +34,37 @@ export const Edit = ({ distributor }: EditProps) => {
       />
       <form
         onSubmit={handleSubmit((data) => {
-          console.log(data);
+          setLoading(true);
+          axios
+            .put(
+              process.env.NEXT_PUBLIC_API_URL +
+                "/distributor/" +
+                distributorData.id,
+              { ...data, dni: data.dni || undefined },
+            )
+            .finally(() => {
+              setLoading(false);
+              navigate("/distributor");
+            });
         })}
         className="mx-auto mt-5 grid w-full grid-cols-2 gap-5"
       >
         <Input
           label="ID (No editable)"
-          value={`${distributor?.id}` ?? ""}
+          value={distributorData.id}
           readOnly
           disabled
           className="opacity-50"
         />
         <Input
-          label="DNI"
-          value={distributorData?.dni}
+          label="DNI (Dejar en blanco para no modificar)"
           errorMessage={errors.dni?.message as string}
           isInvalid={!!errors.dni}
-          onValueChange={(value) =>
-            setDistributorData({
-              ...distributorData,
-              dni: value,
-            })
-          }
           {...register("dni")}
         />
         <Input
           label="Nombre"
-          value={distributorData?.name}
+          value={distributorData.name}
           errorMessage={errors.name?.message as string}
           isInvalid={!!errors.name}
           onValueChange={(value) =>
@@ -71,7 +77,7 @@ export const Edit = ({ distributor }: EditProps) => {
         />
         <Input
           label="Telefono"
-          value={distributorData?.phone}
+          value={distributorData.phone}
           errorMessage={errors.phone?.message as string}
           isInvalid={!!errors.phone}
           startContent="+57"
@@ -85,7 +91,7 @@ export const Edit = ({ distributor }: EditProps) => {
         />
         <Input
           label="Correo"
-          value={distributorData?.email}
+          value={distributorData.email}
           errorMessage={errors.email?.message as string}
           isInvalid={!!errors.email}
           onValueChange={(value) =>
@@ -98,7 +104,7 @@ export const Edit = ({ distributor }: EditProps) => {
         />
         <Input
           label="NIT"
-          value={distributorData?.nit}
+          value={distributorData.nit}
           errorMessage={errors.nit?.message as string}
           isInvalid={!!errors.nit}
           onValueChange={(value) =>
@@ -110,11 +116,30 @@ export const Edit = ({ distributor }: EditProps) => {
           {...register("nit")}
         />
         <div className="col-span-2 flex justify-between">
-          <Button color="danger">Eliminar</Button>
+          <Button
+            color="danger"
+            isLoading={loading}
+            onPress={() => {
+              setLoading(true);
+              axios
+                .delete(
+                  process.env.NEXT_PUBLIC_API_URL +
+                    "/distributor/" +
+                    distributorData.id,
+                )
+                .finally(() => {
+                  setLoading(false);
+                  navigate("/distributor");
+                });
+            }}
+          >
+            Eliminar
+          </Button>
           <Button
             type="submit"
             color="success"
             isDisabled={Object.keys(errors).length > 0}
+            isLoading={loading}
           >
             Guardar
           </Button>

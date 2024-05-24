@@ -8,9 +8,11 @@ import { IoMdArrowRoundBack } from "react-icons/io";
 import { zodResolver } from "@hookform/resolvers/zod";
 import employees from "@/data/employees.json";
 import { employeeSchema } from "@/validations/employeeSchema";
+import { EmployeesInterface } from "@/interfaces/employeesInterface";
+import axios, { Axios, AxiosResponse } from "axios";
 
 interface EditProps {
-  employee: (typeof employees)[0] | undefined;
+  employee: EmployeesInterface;
 }
 
 export const Edit = ({ employee }: EditProps) => {
@@ -22,6 +24,7 @@ export const Edit = ({ employee }: EditProps) => {
   } = useForm({
     resolver: zodResolver(employeeSchema),
   });
+  const [loading, setLoading] = React.useState(false);
 
   return (
     <div className="w-full">
@@ -32,33 +35,35 @@ export const Edit = ({ employee }: EditProps) => {
       />
       <form
         onSubmit={handleSubmit((data) => {
-          console.log(data);
+          setLoading(true);
+          axios
+            .put(process.env.NEXT_PUBLIC_API_URL + "/employee/" + employee.id, {
+              ...data,
+              dni: data.dni || undefined,
+            })
+            .finally(() => {
+              setLoading(false);
+              navigate("/employees");
+            });
         })}
         className="mx-auto mt-5 grid w-full grid-cols-2 gap-5"
       >
         <Input
           label="ID (No editable)"
-          value={`${employee?.id}` ?? ""}
+          value={employeeData.id}
           readOnly
           disabled
           className="opacity-50"
         />
         <Input
-          label="DNI"
-          value={employeeData?.dni}
+          label="DNI (Dejar en blanco para no modificar)"
           errorMessage={errors.dni?.message as string}
           isInvalid={!!errors.dni}
-          onValueChange={(value) =>
-            setEmployeeData({
-              ...employeeData,
-              dni: value,
-            })
-          }
           {...register("dni")}
         />
         <Input
           label="Nombre"
-          value={employeeData?.name}
+          value={employeeData.name}
           errorMessage={errors.name?.message as string}
           isInvalid={!!errors.name}
           onValueChange={(value) =>
@@ -71,7 +76,7 @@ export const Edit = ({ employee }: EditProps) => {
         />
         <Input
           label="Telefono"
-          value={employeeData?.phone}
+          value={employeeData.phone}
           errorMessage={errors.phone?.message as string}
           isInvalid={!!errors.phone}
           startContent="+57"
@@ -85,7 +90,7 @@ export const Edit = ({ employee }: EditProps) => {
         />
         <Input
           label="Correo"
-          value={employeeData?.email}
+          value={employeeData.email}
           errorMessage={errors.email?.message as string}
           isInvalid={!!errors.email}
           onValueChange={(value) =>
@@ -99,7 +104,7 @@ export const Edit = ({ employee }: EditProps) => {
         <Input
           label="Edad"
           type="number"
-          value={`${employeeData?.age}`}
+          value={employeeData.age.toString()}
           errorMessage={errors.age?.message as string}
           isInvalid={!!errors.age}
           onValueChange={(value) =>
@@ -113,7 +118,7 @@ export const Edit = ({ employee }: EditProps) => {
         <Input
           label="Salario"
           type="number"
-          value={`${employeeData?.salary}`}
+          value={employeeData.salary.toString()}
           startContent="$"
           errorMessage={errors.salary?.message as string}
           isInvalid={!!errors.salary}
@@ -126,11 +131,28 @@ export const Edit = ({ employee }: EditProps) => {
           {...register("salary", { valueAsNumber: true })}
         />
         <div className="col-span-2 flex justify-between">
-          <Button color="danger">Eliminar</Button>
+          <Button
+            color="danger"
+            onPress={() => {
+              setLoading(true);
+              axios
+                .delete(
+                  process.env.NEXT_PUBLIC_API_URL + "/employee/" + employee.id,
+                )
+                .finally(() => {
+                  setLoading(false);
+                  navigate("/employees");
+                });
+            }}
+            isLoading={loading}
+          >
+            Eliminar
+          </Button>
           <Button
             type="submit"
             color="success"
             isDisabled={Object.keys(errors).length > 0}
+            isLoading={loading}
           >
             Guardar
           </Button>

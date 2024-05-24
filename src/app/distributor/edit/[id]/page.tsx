@@ -1,7 +1,8 @@
 import { EditDistributorForm } from "@/components/distributor/distributorForms";
 import { enumSections } from "@/config/sections";
 import { ActiveSectionProvider } from "@/providers/activeSection";
-import distributors from "@/data/distributors.json";
+import axios from "axios";
+import { DistributorInterface } from "@/interfaces/distributorInterface";
 
 interface Params {
   params: {
@@ -9,13 +10,14 @@ interface Params {
   };
 }
 
-export default function EditMaterial({ params }: Params) {
-  const distributor = distributors.find(
-    (dsitributor) => dsitributor.id === parseInt(params.id),
+export default async function EditMaterial({ params }: Params) {
+  const { data } = await axios.get<DistributorInterface>(
+    process.env.API_URL + "/distributor/" + params.id,
   );
+
   return (
     <ActiveSectionProvider section={enumSections._PROVIDERS_} editMode>
-      <EditDistributorForm distributor={distributor} />
+      <EditDistributorForm distributor={data} />
     </ActiveSectionProvider>
   );
 }

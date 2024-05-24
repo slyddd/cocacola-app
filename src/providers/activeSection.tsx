@@ -2,6 +2,7 @@
 import { useActualFilter } from "@/context/actualFIlter";
 import { enumSections } from "../config/sections";
 import { useActiveSection } from "../context/actualSection";
+import { useEffect } from "react";
 
 interface ActiveSectionProviderProps {
   children: React.ReactNode;
@@ -12,9 +13,27 @@ interface ActiveSectionProviderProps {
 export const ActiveSectionProvider = ({
   children,
   section,
-  editMode = false,
+  editMode: edit = false,
 }: ActiveSectionProviderProps) => {
-  useActiveSection.setState({ actualSection: section, editMode });
-  useActualFilter.setState({ actualFilter: "", actualColumn: "" });
+  const { setActualColumn, setActualFilter } = useActualFilter();
+  const { setEditMode, setActualSection, actualSection, editMode } =
+    useActiveSection();
+  useEffect(() => {
+    if (section !== actualSection) setActualSection(section);
+    if (editMode !== edit) setEditMode(edit);
+
+    setActualColumn("");
+    setActualFilter("");
+  }, [
+    section,
+    edit,
+    editMode,
+    actualSection,
+    setActualColumn,
+    setActualFilter,
+    setActualSection,
+    setEditMode,
+  ]);
+
   return children;
 };

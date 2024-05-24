@@ -1,34 +1,33 @@
 import { z } from "zod";
 import { prisma } from "@/libs/prisma";
+import axios from "axios";
+import { PersonInterface } from "@/interfaces/personInterface";
 
 export const distributorSchema = z.object({
   dni: z
     .string({
       message: "El DNI es requerido",
     })
-    .min(8, {
-      message: "El DNI debe tener al menos 8 caracteres",
-    })
-    .max(10, {
-      message: "El DNI no puede tener más de 10 caracteres",
-    })
     .refine(
       (value) => {
-        return /^[0-9]+$/.test(value);
+        return /^(?:\d{8}|\d{10})?$/.test(value);
       },
       {
-        message: "El DNI debe contener solo números",
+        message: "El DNI debe tener 8 numeros o 10",
       },
     )
     .refine(
       async (value) => {
-        const person = await prisma.person.findFirst({
-          where: {
-            dni: value,
-          },
-        });
+        if (value === "") return true;
+        try {
+          const { data } = await axios.get<PersonInterface>(
+            `${process.env.NEXT_PUBLIC_API_URL}/person/${value}`,
+          );
 
-        return !person;
+          return !data;
+        } catch (error) {
+          return false;
+        }
       },
       {
         message: "El DNI ya está en uso",

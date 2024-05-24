@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { employeeSchema } from "@/validations/employeeSchema";
+import axios from "axios";
 
 export const Add = () => {
   const [name, setName] = React.useState("");
@@ -17,6 +18,7 @@ export const Add = () => {
   } = useForm({
     resolver: zodResolver(employeeSchema),
   });
+  const [loading, setLoading] = React.useState(false);
 
   return (
     <div className="w-full">
@@ -27,7 +29,13 @@ export const Add = () => {
       />
       <form
         onSubmit={handleSubmit((data) => {
-          console.log(data);
+          setLoading(true);
+          axios
+            .post(process.env.NEXT_PUBLIC_API_URL + "/employee", data)
+            .finally(() => {
+              setLoading(false);
+              navigate("/employees");
+            });
         })}
         className="mx-auto mt-5 grid w-full grid-cols-2 gap-5"
       >
@@ -79,6 +87,7 @@ export const Add = () => {
             color="success"
             className="ml-auto"
             isDisabled={Object.keys(errors).length > 0}
+            isLoading={loading}
           >
             Guardar
           </Button>

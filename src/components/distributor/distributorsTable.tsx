@@ -12,12 +12,12 @@ import {
 import { Tooltip } from "@nextui-org/tooltip";
 import { GiBeerBottle } from "react-icons/gi";
 import { useAsyncList } from "@react-stately/data";
-import distributors from "@/data/distributors.json";
 import { filterItems } from "@/libs/filterItems";
 import { useActualFilter } from "@/context/actualFIlter";
+import { DistributorInterface } from "@/interfaces/distributorInterface";
 
 interface RegTableProps {
-  registers: typeof distributors;
+  registers: DistributorInterface[];
 }
 
 export const DistributorsTable = ({ registers: rows }: RegTableProps) => {

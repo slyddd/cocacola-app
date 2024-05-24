@@ -11,19 +11,19 @@ import {
 } from "@nextui-org/table";
 import { Tooltip } from "@nextui-org/tooltip";
 import { GiBeerBottle } from "react-icons/gi";
-import transportist from "@/data/transportist.json";
 import { useAsyncList } from "@react-stately/data";
 import { useActualFilter } from "@/context/actualFIlter";
 import { filterItems } from "@/libs/filterItems";
+import { TransportistInterface } from "@/interfaces/trasnportistInterface";
 
 interface RegTableProps {
-  registers: typeof transportist;
+  registers: TransportistInterface[];
 }
 
 export const TransportistTable = ({ registers: rows }: RegTableProps) => {
   const { actualFilter, actualColumn } = useActualFilter();
 
-  let list = useAsyncList<(typeof transportist)[0]>({
+  let list = useAsyncList<TransportistInterface>({
     async load() {
       return {
         items: rows,

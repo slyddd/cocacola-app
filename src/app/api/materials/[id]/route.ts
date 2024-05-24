@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/libs/prisma";
 import { materialSchema } from "@/validations/materialSchema";
+import { z } from "zod";
 
 interface Params {
   params: {

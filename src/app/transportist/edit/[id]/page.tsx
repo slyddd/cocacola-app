@@ -1,7 +1,8 @@
 import { EditTransportistForm } from "@/components/transportist/transportistForms";
 import { enumSections } from "@/config/sections";
-import transportist from "@/data/transportist.json";
+import { TransportistInterface } from "@/interfaces/trasnportistInterface";
 import { ActiveSectionProvider } from "@/providers/activeSection";
+import axios from "axios";
 
 interface Params {
   params: {
@@ -9,13 +10,14 @@ interface Params {
   };
 }
 
-export default function EditTransportist({ params }: Params) {
-  const transportists = transportist.find(
-    (transportistItem) => transportistItem.id === parseInt(params.id),
+export default async function EditTransportist({ params }: Params) {
+  const { data } = await axios.get<TransportistInterface>(
+    process.env.API_URL + "/transportist/" + params.id,
   );
+
   return (
     <ActiveSectionProvider section={enumSections._TRANSPORTIST_} editMode>
-      <EditTransportistForm transportist={transportists} />
+      <EditTransportistForm transportist={data} />
     </ActiveSectionProvider>
   );
 }

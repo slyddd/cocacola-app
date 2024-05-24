@@ -7,9 +7,11 @@ import { useForm } from "react-hook-form";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { distributorSchema } from "@/validations/distributorSchema";
+import axios from "axios";
 
 export const Add = () => {
   const [name, setName] = React.useState("");
+  const [dni, setDni] = React.useState(" ");
   const {
     register,
     handleSubmit,
@@ -17,6 +19,7 @@ export const Add = () => {
   } = useForm({
     resolver: zodResolver(distributorSchema),
   });
+  const [loading, setLoading] = React.useState(false);
 
   return (
     <div className="w-full">
@@ -27,7 +30,13 @@ export const Add = () => {
       />
       <form
         onSubmit={handleSubmit((data) => {
-          console.log(data);
+          setLoading(true);
+          axios
+            .post(process.env.NEXT_PUBLIC_API_URL + "/distributor", data)
+            .finally(() => {
+              setLoading(false);
+              navigate("/distributor");
+            });
         })}
         className="mx-auto mt-5 grid w-full grid-cols-2 gap-5"
       >
@@ -35,6 +44,8 @@ export const Add = () => {
           label="DNI"
           errorMessage={errors.dni?.message as string}
           isInvalid={!!errors.dni}
+          value={dni}
+          onValueChange={(value) => setDni(value === "" ? " " : value)}
           {...register("dni")}
         />
         <Input
@@ -70,6 +81,7 @@ export const Add = () => {
             color="success"
             className="ml-auto"
             isDisabled={Object.keys(errors).length > 0}
+            isLoading={loading}
           >
             Guardar
           </Button>

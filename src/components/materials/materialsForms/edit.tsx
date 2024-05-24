@@ -8,9 +8,11 @@ import { useForm } from "react-hook-form";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { materialSchema } from "@/validations/materialSchema";
+import { MaterialsInterface } from "@/interfaces/materialsInterface";
+import axios from "axios";
 
 interface EditProps {
-  material: (typeof materials)[0] | undefined;
+  material: MaterialsInterface;
 }
 
 export const Edit = ({ material }: EditProps) => {
@@ -22,6 +24,7 @@ export const Edit = ({ material }: EditProps) => {
   } = useForm({
     resolver: zodResolver(materialSchema),
   });
+  const [loading, setLoading] = React.useState(false);
 
   return (
     <div className="w-full">
@@ -31,21 +34,30 @@ export const Edit = ({ material }: EditProps) => {
         isIconOnly
       />
       <form
-        onSubmit={handleSubmit((data) => {
-          console.log(data);
+        onSubmit={handleSubmit((formData) => {
+          setLoading(true);
+          axios
+            .put(
+              process.env.NEXT_PUBLIC_API_URL + "/materials/" + materialData.id,
+              formData,
+            )
+            .finally(() => {
+              setLoading(false);
+              navigate("/materials");
+            });
         })}
         className="mx-auto mt-5 grid w-full grid-cols-2 gap-5"
       >
         <Input
           label="ID (No editable)"
-          value={`${material?.id}` ?? ""}
+          value={materialData.id}
           readOnly
           disabled
           className="opacity-50"
         />
         <Input
           label="Nombre"
-          value={materialData?.name}
+          value={materialData.name}
           errorMessage={errors.name?.message as string}
           isInvalid={!!errors.name}
           onValueChange={(value) =>
@@ -59,7 +71,7 @@ export const Edit = ({ material }: EditProps) => {
         <Input
           label="Cantidad"
           type="number"
-          value={`${materialData?.quantity}`}
+          value={materialData.quantity.toString()}
           errorMessage={errors.quantity?.message as string}
           isInvalid={!!errors.quantity}
           onValueChange={(value) =>
@@ -72,13 +84,13 @@ export const Edit = ({ material }: EditProps) => {
         />
         <Input
           label="Unidad"
-          value={`${materialData?.unit}`}
+          value={materialData.unit}
           errorMessage={errors.unit?.message as string}
           isInvalid={!!errors.unit}
           onValueChange={(value) =>
             setMaterialData({
               ...materialData,
-              unit: value,
+              unit: value.toUpperCase(),
             })
           }
           {...register("unit")}
@@ -86,7 +98,7 @@ export const Edit = ({ material }: EditProps) => {
         <Input
           label="Precio"
           type="number"
-          value={`${materialData?.price}`}
+          value={materialData.price.toString()}
           errorMessage={errors.price?.message as string}
           isInvalid={!!errors.price}
           startContent="$"
@@ -99,11 +111,30 @@ export const Edit = ({ material }: EditProps) => {
           {...register("price", { valueAsNumber: true })}
         />
         <div className="col-span-2 flex justify-between">
-          <Button color="danger">Eliminar</Button>
+          <Button
+            color="danger"
+            isLoading={loading}
+            onPress={() => {
+              setLoading(true);
+              axios
+                .delete(
+                  process.env.NEXT_PUBLIC_API_URL +
+                    "/materials/" +
+                    materialData.id,
+                )
+                .finally(() => {
+                  setLoading(false);
+                  navigate("/materials");
+                });
+            }}
+          >
+            Eliminar
+          </Button>
           <Button
             type="submit"
             color="success"
             isDisabled={Object.keys(errors).length > 0}
+            isLoading={loading}
           >
             Guardar
           </Button>

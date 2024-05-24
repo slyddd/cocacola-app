@@ -7,9 +7,11 @@ import { useForm } from "react-hook-form";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { materialSchema } from "@/validations/materialSchema";
+import axios from "axios";
 
 export const Add = () => {
   const [name, setName] = React.useState("");
+  const [unit, setUnit] = React.useState("");
   const {
     register,
     handleSubmit,
@@ -17,6 +19,7 @@ export const Add = () => {
   } = useForm({
     resolver: zodResolver(materialSchema),
   });
+  const [loading, setLoading] = React.useState(false);
 
   return (
     <div className="w-full">
@@ -26,8 +29,14 @@ export const Add = () => {
         isIconOnly
       />
       <form
-        onSubmit={handleSubmit((data) => {
-          console.log(data);
+        onSubmit={handleSubmit((formData) => {
+          setLoading(true);
+          axios
+            .post(process.env.NEXT_PUBLIC_API_URL + "/materials", formData)
+            .finally(() => {
+              setLoading(false);
+              navigate("/materials");
+            });
         })}
         className="mx-auto mt-5 grid w-full grid-cols-2 gap-5"
       >
@@ -50,6 +59,8 @@ export const Add = () => {
           label="Unidad"
           errorMessage={errors.unit?.message as string}
           isInvalid={!!errors.unit}
+          value={unit}
+          onValueChange={(value) => setUnit(value.toUpperCase())}
           {...register("unit")}
         />
         <Input
@@ -66,6 +77,7 @@ export const Add = () => {
             color="success"
             className="ml-auto"
             isDisabled={Object.keys(errors).length > 0}
+            isLoading={loading}
           >
             Añadir
           </Button>

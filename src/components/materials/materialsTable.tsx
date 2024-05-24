@@ -12,12 +12,12 @@ import {
 import { Tooltip } from "@nextui-org/tooltip";
 import { GiBeerBottle } from "react-icons/gi";
 import { useAsyncList } from "@react-stately/data";
-import materials from "@/data/materials.json";
 import { useActualFilter } from "@/context/actualFIlter";
 import { filterItems } from "@/libs/filterItems";
+import { MaterialsInterface } from "@/interfaces/materialsInterface";
 
 interface RegTableProps {
-  registers: typeof materials;
+  registers: MaterialsInterface[];
 }
 
 export const MaterialsTable = ({ registers: rows }: RegTableProps) => {
@@ -87,7 +87,7 @@ export const MaterialsTable = ({ registers: rows }: RegTableProps) => {
             CANTIDAD
           </TableColumn>
           <TableColumn key="price" allowsSorting>
-            PRRECIO
+            PRECIO
           </TableColumn>
         </TableHeader>
         <TableBody

@@ -6,11 +6,12 @@ import { Input } from "@nextui-org/input";
 import { useForm } from "react-hook-form";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { zodResolver } from "@hookform/resolvers/zod";
-import transportist from "@/data/transportist.json";
 import { transportistSchema } from "@/validations/transportistSchema";
+import { TransportistInterface } from "@/interfaces/trasnportistInterface";
+import axios from "axios";
 
 interface EditProps {
-  transportist: (typeof transportist)[0] | undefined;
+  transportist: TransportistInterface;
 }
 
 export const Edit = ({ transportist }: EditProps) => {
@@ -22,6 +23,7 @@ export const Edit = ({ transportist }: EditProps) => {
   } = useForm({
     resolver: zodResolver(transportistSchema),
   });
+  const [loading, setLoading] = React.useState(false);
 
   return (
     <div className="w-full">
@@ -32,33 +34,37 @@ export const Edit = ({ transportist }: EditProps) => {
       />
       <form
         onSubmit={handleSubmit((data) => {
-          console.log(data);
+          setLoading(true);
+          axios
+            .put(
+              process.env.NEXT_PUBLIC_API_URL +
+                "/transportist/" +
+                transportist.id,
+              { ...data, dni: data.dni || undefined },
+            )
+            .finally(() => {
+              setLoading(false);
+              navigate("/transportist");
+            });
         })}
         className="mx-auto mt-5 grid w-full grid-cols-2 gap-5"
       >
         <Input
           label="ID (No editable)"
-          value={`${transportist?.id}` ?? ""}
+          value={transportistData.id}
           readOnly
           disabled
           className="opacity-50"
         />
         <Input
-          label="DNI"
-          value={transportistData?.dni}
+          label="DNI (Dejar en blanco para no modificar)"
           errorMessage={errors.dni?.message as string}
           isInvalid={!!errors.dni}
-          onValueChange={(value) =>
-            setTransportistData({
-              ...transportistData,
-              dni: value,
-            })
-          }
           {...register("dni")}
         />
         <Input
           label="Nombre"
-          value={transportistData?.name}
+          value={transportistData.name}
           errorMessage={errors.name?.message as string}
           isInvalid={!!errors.name}
           onValueChange={(value) =>
@@ -71,7 +77,7 @@ export const Edit = ({ transportist }: EditProps) => {
         />
         <Input
           label="Telefono"
-          value={transportistData?.phone}
+          value={transportistData.phone}
           errorMessage={errors.phone?.message as string}
           isInvalid={!!errors.phone}
           startContent="+57"
@@ -85,7 +91,7 @@ export const Edit = ({ transportist }: EditProps) => {
         />
         <Input
           label="Correo"
-          value={transportistData?.email}
+          value={transportistData.email}
           errorMessage={errors.email?.message as string}
           isInvalid={!!errors.email}
           onValueChange={(value) =>
@@ -98,7 +104,7 @@ export const Edit = ({ transportist }: EditProps) => {
         />
         <Input
           label="Licencia"
-          value={transportistData?.license}
+          value={transportistData.license}
           errorMessage={errors.license?.message as string}
           isInvalid={!!errors.license}
           onValueChange={(value) =>
@@ -110,11 +116,30 @@ export const Edit = ({ transportist }: EditProps) => {
           {...register("license")}
         />
         <div className="col-span-2 flex justify-between">
-          <Button color="danger">Eliminar</Button>
+          <Button
+            color="danger"
+            onPress={() => {
+              setLoading(true);
+              axios
+                .delete(
+                  process.env.NEXT_PUBLIC_API_URL +
+                    "/transportist/" +
+                    transportist.id,
+                )
+                .finally(() => {
+                  setLoading(false);
+                  navigate("/transportist");
+                });
+            }}
+            isLoading={loading}
+          >
+            Eliminar
+          </Button>
           <Button
             type="submit"
             color="success"
             isDisabled={Object.keys(errors).length > 0}
+            isLoading={loading}
           >
             Guardar
           </Button>

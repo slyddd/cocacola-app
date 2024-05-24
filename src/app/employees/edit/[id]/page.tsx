@@ -1,7 +1,8 @@
 import { enumSections } from "@/config/sections";
 import { ActiveSectionProvider } from "@/providers/activeSection";
-import employees from "@/data/employees.json";
 import { EditEmployeesForm } from "@/components/employees/employeesForms";
+import axios from "axios";
+import { EmployeesInterface } from "@/interfaces/employeesInterface";
 
 interface Params {
   params: {
@@ -9,13 +10,13 @@ interface Params {
   };
 }
 
-export default function EditEmployee({ params }: Params) {
-  const employee = employees.find(
-    (employee) => employee.id === parseInt(params.id),
+export default async function EditEmployee({ params }: Params) {
+  const { data } = await axios.get<EmployeesInterface>(
+    process.env.API_URL + "/employee/" + params.id,
   );
   return (
     <ActiveSectionProvider section={enumSections._EMPLOYEES_} editMode>
-      <EditEmployeesForm employee={employee} />
+      <EditEmployeesForm employee={data} />
     </ActiveSectionProvider>
   );
 }
