@@ -35,5 +35,5 @@ export const ActiveSectionProvider = ({
     setEditMode,
   ]);
 
-  return children;
+  return <>{children}</>;
 };
