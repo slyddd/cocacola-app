@@ -9,8 +9,13 @@ import { Ref, useEffect, useRef } from "react";
 import { navigate } from "@/config/navigate";
 import { useActualFilter } from "@/context/actualFIlter";
 import { Chip } from "@nextui-org/chip";
+import { generateReport } from "@/libs/generateReport";
+import axios from "axios";
+import { MainInterface } from "@/interfaces/mainInterface";
+import { useActiveSection } from "@/context/actualSection";
 
 export const BlurActions = () => {
+  const { actualSection } = useActiveSection();
   const { blurState, setBlur } = useBlurActions();
   const { actualFilter, actualColumn, setActualFilter, setActualColumn } =
     useActualFilter();
@@ -72,6 +77,14 @@ export const BlurActions = () => {
           <Button
             size="sm"
             endContent={<TbReportAnalytics className="text-xl" />}
+            onPress={async () => {
+              await generateReport({
+                title: actualSection,
+                url: actualUrl,
+              });
+
+              setBlur(false);
+            }}
           >
             Crear Reporte
           </Button>

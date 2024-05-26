@@ -1,5 +1,4 @@
 import { Chip } from "@nextui-org/chip";
-import { Session } from "next-auth";
 import { signOut } from "@/auth";
 
 import React from "react";

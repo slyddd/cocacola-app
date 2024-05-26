@@ -43,7 +43,7 @@ export const Aside = () => {
       </Tooltip>
 
       <Tooltip content="Empleados" placement="right">
-        <Link href="/employees">
+        <Link href="/employee">
           <FaUserTie
             className={
               actualSection === enumSections._EMPLOYEES_ ? "text-accent" : ""
