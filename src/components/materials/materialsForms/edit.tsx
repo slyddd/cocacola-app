@@ -2,7 +2,6 @@
 import { navigate } from "@/config/navigate";
 import { Button } from "@nextui-org/button";
 import React from "react";
-import materials from "@/data/materials.json";
 import { Input } from "@nextui-org/input";
 import { useForm } from "react-hook-form";
 import { IoMdArrowRoundBack } from "react-icons/io";
@@ -13,9 +12,10 @@ import axios from "axios";
 
 interface EditProps {
   material: MaterialsInterface;
+  admin: string;
 }
 
-export const Edit = ({ material }: EditProps) => {
+export const Edit = ({ material, admin }: EditProps) => {
   const [materialData, setMaterialData] = React.useState(material!);
   const {
     register,
@@ -40,6 +40,9 @@ export const Edit = ({ material }: EditProps) => {
             .put(
               process.env.NEXT_PUBLIC_API_URL + "/materials/" + materialData.id,
               formData,
+              {
+                params: { admin },
+              },
             )
             .finally(() => {
               setLoading(false);
@@ -121,6 +124,9 @@ export const Edit = ({ material }: EditProps) => {
                   process.env.NEXT_PUBLIC_API_URL +
                     "/materials/" +
                     materialData.id,
+                  {
+                    params: { admin },
+                  },
                 )
                 .finally(() => {
                   setLoading(false);

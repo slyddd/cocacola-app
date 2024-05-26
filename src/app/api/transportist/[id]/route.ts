@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/libs/prisma";
 import { z } from "zod";
 import { transportistSchema } from "@/validations/transportistSchema";
+import axios from "axios";
 
 interface Params {
   params: {
@@ -38,6 +39,21 @@ export async function GET(request: NextRequest, { params }: Params) {
 }
 
 export async function PUT(request: NextRequest, { params }: Params) {
+  const searchParams = request.nextUrl.searchParams;
+  const admin = searchParams.get("admin");
+  const validAdmin = admin
+    ? await prisma.admin.findFirst({
+        where: { id: admin },
+      })
+    : null;
+
+  if (!admin || !validAdmin) {
+    return NextResponse.json(
+      { error: "Unauthorized, you need to be an admin" },
+      { status: 401 },
+    );
+  }
+
   const body: z.infer<typeof transportistSchema> = await request.json();
   const validation = await transportistSchema.safeParseAsync(body);
 
@@ -61,6 +77,20 @@ export async function PUT(request: NextRequest, { params }: Params) {
         },
       },
     });
+
+    const setRegister = await axios.post(
+      process.env.API_URL + "/admin/" + validAdmin.id,
+      {
+        description: `Se ha actualizado el transportista ${transportist.person.name} con el dni ${transportist.person.dni}`,
+      },
+    );
+
+    if (!setRegister) {
+      return NextResponse.json(
+        { error: "Error al crear el registro del cambio" },
+        { status: 500 },
+      );
+    }
     return NextResponse.json(transportist);
   } catch (error) {
     if (error instanceof Error) {
@@ -70,6 +100,21 @@ export async function PUT(request: NextRequest, { params }: Params) {
 }
 
 export async function DELETE(request: NextRequest, { params }: Params) {
+  const searchParams = request.nextUrl.searchParams;
+  const admin = searchParams.get("admin");
+  const validAdmin = admin
+    ? await prisma.admin.findFirst({
+        where: { id: admin },
+      })
+    : null;
+
+  if (!admin || !validAdmin) {
+    return NextResponse.json(
+      { error: "Unauthorized, you need to be an admin" },
+      { status: 401 },
+    );
+  }
+
   const transportist = await prisma.transportist.findUnique({
     where: { id: params.id },
     include: { person: true },
@@ -83,6 +128,7 @@ export async function DELETE(request: NextRequest, { params }: Params) {
   }
 
   try {
+    const { name, dni } = transportist.person;
     await prisma.transportist.delete({
       where: { id: params.id },
     });
@@ -90,6 +136,20 @@ export async function DELETE(request: NextRequest, { params }: Params) {
     await prisma.person.delete({
       where: { dni: transportist.person.dni },
     });
+
+    const setRegister = await axios.post(
+      process.env.API_URL + "/admin/" + validAdmin.id,
+      {
+        description: `Se ha eliminado el transportista ${name} con el dni ${dni}`,
+      },
+    );
+
+    if (!setRegister) {
+      return NextResponse.json(
+        { error: "Error al crear el registro del cambio" },
+        { status: 500 },
+      );
+    }
 
     return NextResponse.json(transportist);
   } catch (error) {

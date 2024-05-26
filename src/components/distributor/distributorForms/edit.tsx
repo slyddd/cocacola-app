@@ -12,9 +12,10 @@ import axios from "axios";
 
 interface EditProps {
   distributor: DistributorInterface;
+  admin: string;
 }
 
-export const Edit = ({ distributor }: EditProps) => {
+export const Edit = ({ distributor, admin }: EditProps) => {
   const [distributorData, setDistributorData] = React.useState(distributor);
   const {
     register,
@@ -24,6 +25,7 @@ export const Edit = ({ distributor }: EditProps) => {
     resolver: zodResolver(distributorSchema),
   });
   const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState("");
 
   return (
     <div className="w-full">
@@ -32,6 +34,7 @@ export const Edit = ({ distributor }: EditProps) => {
         startContent={<IoMdArrowRoundBack />}
         isIconOnly
       />
+      {error && <span className="text-center text-red-500">{error}</span>}
       <form
         onSubmit={handleSubmit((data) => {
           setLoading(true);
@@ -41,10 +44,15 @@ export const Edit = ({ distributor }: EditProps) => {
                 "/distributor/" +
                 distributorData.id,
               { ...data, dni: data.dni || undefined },
+              { params: { admin } },
             )
+            .catch((error) => setError(error.response.data.message))
+            .then(() => {
+              setError("");
+              navigate("/distributor");
+            })
             .finally(() => {
               setLoading(false);
-              navigate("/distributor");
             });
         })}
         className="mx-auto mt-5 grid w-full grid-cols-2 gap-5"
@@ -126,10 +134,15 @@ export const Edit = ({ distributor }: EditProps) => {
                   process.env.NEXT_PUBLIC_API_URL +
                     "/distributor/" +
                     distributorData.id,
+                  { params: { admin } },
                 )
+                .catch((error) => setError(error.response.data.message))
+                .then(() => {
+                  setError("");
+                  navigate("/distributor");
+                })
                 .finally(() => {
                   setLoading(false);
-                  navigate("/distributor");
                 });
             }}
           >

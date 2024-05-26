@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { EmployeesInterface } from "@/interfaces/employeesInterface";
 import axios from "axios";
+import { PersonInterface } from "@/interfaces/personInterface";
 
 export const employeeSchema = z.object({
   dni: z
@@ -19,7 +19,7 @@ export const employeeSchema = z.object({
       async (value) => {
         if (value === "") return true;
         try {
-          const { data } = await axios.get<EmployeesInterface>(
+          const { data } = await axios.get<PersonInterface>(
             `${process.env.NEXT_PUBLIC_API_URL}/person/${value}`,
           );
 

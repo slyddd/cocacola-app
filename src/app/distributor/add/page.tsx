@@ -1,11 +1,13 @@
+import { auth } from "@/auth";
 import { AddDistributorForm } from "@/components/distributor/distributorForms";
 import { enumSections } from "@/config/sections";
 import { ActiveSectionProvider } from "@/providers/activeSection";
 
-export default function AddMaterial() {
+export default async function AddMaterial() {
+  const session = await auth();
   return (
     <ActiveSectionProvider section={enumSections._PROVIDERS_} editMode>
-      <AddDistributorForm />
+      <AddDistributorForm admin={session?.user?.id || ""} />
     </ActiveSectionProvider>
   );
 }

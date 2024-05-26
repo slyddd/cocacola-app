@@ -6,16 +6,16 @@ import { Input } from "@nextui-org/input";
 import { useForm } from "react-hook-form";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { zodResolver } from "@hookform/resolvers/zod";
-import employees from "@/data/employees.json";
 import { employeeSchema } from "@/validations/employeeSchema";
 import { EmployeesInterface } from "@/interfaces/employeesInterface";
-import axios, { Axios, AxiosResponse } from "axios";
+import axios from "axios";
 
 interface EditProps {
   employee: EmployeesInterface;
+  admin: string;
 }
 
-export const Edit = ({ employee }: EditProps) => {
+export const Edit = ({ employee, admin }: EditProps) => {
   const [employeeData, setEmployeeData] = React.useState(employee!);
   const {
     register,
@@ -37,10 +37,16 @@ export const Edit = ({ employee }: EditProps) => {
         onSubmit={handleSubmit((data) => {
           setLoading(true);
           axios
-            .put(process.env.NEXT_PUBLIC_API_URL + "/employee/" + employee.id, {
-              ...data,
-              dni: data.dni || undefined,
-            })
+            .put(
+              process.env.NEXT_PUBLIC_API_URL + "/employee/" + employee.id,
+              {
+                ...data,
+                dni: data.dni || undefined,
+              },
+              {
+                params: { admin },
+              },
+            )
             .finally(() => {
               setLoading(false);
               navigate("/employees");
@@ -138,6 +144,9 @@ export const Edit = ({ employee }: EditProps) => {
               axios
                 .delete(
                   process.env.NEXT_PUBLIC_API_URL + "/employee/" + employee.id,
+                  {
+                    params: { admin },
+                  },
                 )
                 .finally(() => {
                   setLoading(false);

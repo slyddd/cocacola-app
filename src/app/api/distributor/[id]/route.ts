@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/libs/prisma";
 import { distributorSchema } from "@/validations/distributorSchema";
 import { z } from "zod";
+import axios from "axios";
 
 interface Params {
   params: {
@@ -38,6 +39,21 @@ export async function GET(request: NextRequest, { params }: Params) {
 }
 
 export async function PUT(request: NextRequest, { params }: Params) {
+  const searchParams = request.nextUrl.searchParams;
+  const admin = searchParams.get("admin");
+  const validAdmin = admin
+    ? await prisma.admin.findFirst({
+        where: { id: admin },
+      })
+    : null;
+
+  if (!admin || !validAdmin) {
+    return NextResponse.json(
+      { error: "Unauthorized, you need to be an admin" },
+      { status: 401 },
+    );
+  }
+
   const body: z.infer<typeof distributorSchema> = await request.json();
   const validation = await distributorSchema.safeParseAsync(body);
 
@@ -61,6 +77,21 @@ export async function PUT(request: NextRequest, { params }: Params) {
         },
       },
     });
+
+    const setRegister = await axios.post(
+      process.env.API_URL + "/admin/" + validAdmin.id,
+      {
+        description: `Ha actualizado el distribuidor (${distributor.person.name})`,
+      },
+    );
+
+    if (!setRegister) {
+      return NextResponse.json(
+        { error: "Error al crear el registro del cambio" },
+        { status: 500 },
+      );
+    }
+
     return NextResponse.json(distributor);
   } catch (error) {
     if (error instanceof Error) {
@@ -70,6 +101,21 @@ export async function PUT(request: NextRequest, { params }: Params) {
 }
 
 export async function DELETE(request: NextRequest, { params }: Params) {
+  const searchParams = request.nextUrl.searchParams;
+  const admin = searchParams.get("admin");
+  const validAdmin = admin
+    ? await prisma.admin.findFirst({
+        where: { id: admin },
+      })
+    : null;
+
+  if (!admin || !validAdmin) {
+    return NextResponse.json(
+      { error: "Unauthorized, you need to be an admin" },
+      { status: 401 },
+    );
+  }
+
   const distributor = await prisma.distributor.findUnique({
     where: { id: params.id },
     include: { person: true },
@@ -83,6 +129,11 @@ export async function DELETE(request: NextRequest, { params }: Params) {
   }
 
   try {
+    const {
+      person: { name },
+      nit,
+    } = distributor;
+
     await prisma.distributor.delete({
       where: { id: params.id },
     });
@@ -90,6 +141,20 @@ export async function DELETE(request: NextRequest, { params }: Params) {
     await prisma.person.delete({
       where: { dni: distributor.person.dni },
     });
+
+    const setRegister = await axios.post(
+      process.env.API_URL + "/admin/" + validAdmin.id,
+      {
+        description: `Ha eliminado el distribuidor (${name}) con el nit: ${nit}`,
+      },
+    );
+
+    if (!setRegister) {
+      return NextResponse.json(
+        { error: "Error al crear el registro del cambio" },
+        { status: 500 },
+      );
+    }
 
     return NextResponse.json(distributor);
   } catch (error) {

@@ -10,22 +10,28 @@ import {
 } from "@nextui-org/table";
 import { GiBeerBottle } from "react-icons/gi";
 import { useAsyncList } from "@react-stately/data";
+import { RegisterInterface } from "@/interfaces/registerInterfcae";
 
 interface RegTableProps {
-  registers: Array<any>;
+  registers: RegisterInterface[];
 }
 
 export const RegTable = ({ registers: rows }: RegTableProps) => {
   let list = useAsyncList({
     async load() {
-      return { items: rows };
+      return {
+        items: rows.map((row) => ({
+          ...row,
+          createdAt: new Date(row.createdAt).toLocaleDateString(),
+        })),
+      };
     },
 
     async sort({ items, sortDescriptor }) {
       return {
         items: items.sort((a, b) => {
-          let first = a[sortDescriptor.column ?? "id"];
-          let second = b[sortDescriptor.column ?? "id"];
+          let first = a[(sortDescriptor.column ?? "id") as keyof typeof a];
+          let second = b[(sortDescriptor.column ?? "id") as keyof typeof b];
           let cmp =
             (parseInt(first) || first) < (parseInt(second) || second) ? -1 : 1;
 
@@ -44,8 +50,8 @@ export const RegTable = ({ registers: rows }: RegTableProps) => {
       isHeaderSticky
       removeWrapper
       classNames={{
-        base: "h-[80%] max-h-[85%] overflow-y-scroll",
-        table: "h-[80%] max-h-[85%]",
+        base: "max-h-[80%] overflow-y-scroll",
+        table: "max-h-[80%]",
         thead: "[&>tr>th]:bg-black/10 [&>tr>th]:backdrop-blur-md",
       }}
       sortDescriptor={list.sortDescriptor}
@@ -56,7 +62,7 @@ export const RegTable = ({ registers: rows }: RegTableProps) => {
           ID
         </TableColumn>
         <TableColumn key="description">DESCRIPCIÓN DEL CAMBIO</TableColumn>
-        <TableColumn key="date" allowsSorting>
+        <TableColumn key="createdAt" allowsSorting>
           FECHA
         </TableColumn>
       </TableHeader>
@@ -70,7 +76,7 @@ export const RegTable = ({ registers: rows }: RegTableProps) => {
         }
       >
         {(row) => (
-          <TableRow key={row.key}>
+          <TableRow key={row.id}>
             {(item) => <TableCell>{getKeyValue(row, item)}</TableCell>}
           </TableRow>
         )}

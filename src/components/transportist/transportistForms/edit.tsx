@@ -12,9 +12,10 @@ import axios from "axios";
 
 interface EditProps {
   transportist: TransportistInterface;
+  admin: string;
 }
 
-export const Edit = ({ transportist }: EditProps) => {
+export const Edit = ({ transportist, admin }: EditProps) => {
   const [transportistData, setTransportistData] = React.useState(transportist!);
   const {
     register,
@@ -41,6 +42,9 @@ export const Edit = ({ transportist }: EditProps) => {
                 "/transportist/" +
                 transportist.id,
               { ...data, dni: data.dni || undefined },
+              {
+                params: { admin },
+              },
             )
             .finally(() => {
               setLoading(false);
@@ -125,6 +129,9 @@ export const Edit = ({ transportist }: EditProps) => {
                   process.env.NEXT_PUBLIC_API_URL +
                     "/transportist/" +
                     transportist.id,
+                  {
+                    params: { admin },
+                  },
                 )
                 .finally(() => {
                   setLoading(false);

@@ -16,7 +16,11 @@ import { useBlurActions } from "@/context/blurActions";
 import { enumSections } from "@/config/sections";
 import { useActiveSection } from "@/context/actualSection";
 
-export const Navbar = () => {
+interface NavbarProps {
+  user: string;
+}
+
+export const Navbar = ({ user }: NavbarProps) => {
   const { setBlur } = useBlurActions();
   const { actualSection, editMode } = useActiveSection();
 
@@ -61,21 +65,19 @@ export const Navbar = () => {
             <Divider orientation="vertical" className="h-1/2" />
             <div className="flex items-center justify-center gap-2">
               <FaUser />
-              <p>user</p>
+              <p>{user}</p>
             </div>
           </>
         )}
       </NavbarContent>
 
       <NavbarContent justify="end">
-        {actualSection !== enumSections._HOME_ && !editMode ? (
+        {actualSection !== enumSections._HOME_ && !editMode && (
           <button className="hover:opacity-70" onClick={() => setBlur(true)}>
             <Kbd className="text-foreground" keys={["command"]}>
               k para busqueda y opciones
             </Kbd>
           </button>
-        ) : (
-          <></>
         )}
         <ThemeSwitch />
       </NavbarContent>

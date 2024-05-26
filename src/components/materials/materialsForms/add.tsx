@@ -9,7 +9,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { materialSchema } from "@/validations/materialSchema";
 import axios from "axios";
 
-export const Add = () => {
+interface AddProps {
+  admin: string;
+}
+
+export const Add = ({ admin }: AddProps) => {
   const [name, setName] = React.useState("");
   const [unit, setUnit] = React.useState("");
   const {
@@ -32,7 +36,9 @@ export const Add = () => {
         onSubmit={handleSubmit((formData) => {
           setLoading(true);
           axios
-            .post(process.env.NEXT_PUBLIC_API_URL + "/materials", formData)
+            .post(process.env.NEXT_PUBLIC_API_URL + "/materials", formData, {
+              params: { admin },
+            })
             .finally(() => {
               setLoading(false);
               navigate("/materials");

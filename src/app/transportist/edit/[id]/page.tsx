@@ -1,3 +1,4 @@
+import { auth } from "@/auth";
 import { EditTransportistForm } from "@/components/transportist/transportistForms";
 import { enumSections } from "@/config/sections";
 import { TransportistInterface } from "@/interfaces/trasnportistInterface";
@@ -11,13 +12,17 @@ interface Params {
 }
 
 export default async function EditTransportist({ params }: Params) {
+  const session = await auth();
   const { data } = await axios.get<TransportistInterface>(
     process.env.API_URL + "/transportist/" + params.id,
   );
 
   return (
     <ActiveSectionProvider section={enumSections._TRANSPORTIST_} editMode>
-      <EditTransportistForm transportist={data} />
+      <EditTransportistForm
+        transportist={data}
+        admin={session?.user?.id || ""}
+      />
     </ActiveSectionProvider>
   );
 }

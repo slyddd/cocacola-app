@@ -9,7 +9,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { employeeSchema } from "@/validations/employeeSchema";
 import axios from "axios";
 
-export const Add = () => {
+interface AddProps {
+  admin: string;
+}
+
+export const Add = ({ admin }: AddProps) => {
   const [name, setName] = React.useState("");
   const {
     register,
@@ -31,7 +35,9 @@ export const Add = () => {
         onSubmit={handleSubmit((data) => {
           setLoading(true);
           axios
-            .post(process.env.NEXT_PUBLIC_API_URL + "/employee", data)
+            .post(process.env.NEXT_PUBLIC_API_URL + "/employee", data, {
+              params: { admin },
+            })
             .finally(() => {
               setLoading(false);
               navigate("/employees");

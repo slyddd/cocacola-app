@@ -9,7 +9,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { distributorSchema } from "@/validations/distributorSchema";
 import axios from "axios";
 
-export const Add = () => {
+interface AddProps {
+  admin: string;
+}
+
+export const Add = ({ admin }: AddProps) => {
   const [name, setName] = React.useState("");
   const [dni, setDni] = React.useState(" ");
   const {
@@ -32,7 +36,9 @@ export const Add = () => {
         onSubmit={handleSubmit((data) => {
           setLoading(true);
           axios
-            .post(process.env.NEXT_PUBLIC_API_URL + "/distributor", data)
+            .post(process.env.NEXT_PUBLIC_API_URL + "/distributor", data, {
+              params: { admin },
+            })
             .finally(() => {
               setLoading(false);
               navigate("/distributor");

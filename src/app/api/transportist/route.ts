@@ -3,6 +3,7 @@ import { prisma } from "@/libs/prisma";
 import { distributorSchema } from "@/validations/distributorSchema";
 import { transportistSchema } from "@/validations/transportistSchema";
 import { z } from "zod";
+import axios from "axios";
 
 export async function GET() {
   try {
@@ -28,6 +29,21 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
+  const searchParams = request.nextUrl.searchParams;
+  const admin = searchParams.get("admin");
+  const validAdmin = admin
+    ? await prisma.admin.findFirst({
+        where: { id: admin },
+      })
+    : null;
+
+  if (!admin || !validAdmin) {
+    return NextResponse.json(
+      { error: "Unauthorized, you need to be an admin" },
+      { status: 401 },
+    );
+  }
+
   const body: z.infer<typeof transportistSchema> = await request.json();
   const validation = await transportistSchema.safeParseAsync({
     ...body,
@@ -39,7 +55,7 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const distributor = await prisma.transportist.create({
+    const transportist = await prisma.transportist.create({
       include: { person: true },
       data: {
         license: body.license,
@@ -53,7 +69,22 @@ export async function POST(request: NextRequest) {
         },
       },
     });
-    return NextResponse.json(distributor, { status: 201 });
+
+    const setRegister = await axios.post(
+      process.env.API_URL + "/admin/" + validAdmin.id,
+      {
+        description: `Se ha creado un nuevo transportista con el nombre ${transportist.person.name} y el dni ${transportist.person.dni}`,
+      },
+    );
+
+    if (!setRegister) {
+      return NextResponse.json(
+        { error: "Error al crear el registro del cambio" },
+        { status: 500 },
+      );
+    }
+
+    return NextResponse.json(transportist, { status: 201 });
   } catch (error) {
     if (error instanceof Error) {
       return NextResponse.json({ error: error.message }, { status: 500 });

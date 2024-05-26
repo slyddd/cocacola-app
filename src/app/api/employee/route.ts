@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/libs/prisma";
 import { employeeSchema } from "@/validations/employeeSchema";
 import { z } from "zod";
+import axios from "axios";
 
 export async function GET() {
   try {
@@ -30,6 +31,21 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
+  const searchParams = request.nextUrl.searchParams;
+  const admin = searchParams.get("admin");
+  const validAdmin = admin
+    ? await prisma.admin.findFirst({
+        where: { id: admin },
+      })
+    : null;
+
+  if (!admin || !validAdmin) {
+    return NextResponse.json(
+      { error: "Unauthorized, you need to be an admin" },
+      { status: 401 },
+    );
+  }
+
   const body: z.infer<typeof employeeSchema> = await request.json();
   const validation = await employeeSchema.safeParseAsync({
     ...body,
@@ -58,6 +74,20 @@ export async function POST(request: NextRequest) {
         },
       },
     });
+
+    const setRegister = await axios.post(
+      process.env.API_URL + "/admin/" + validAdmin.id,
+      {
+        description: `Ha creado un nuevo empleado (${employee.person.name}) con el dni ${employee.person.dni}`,
+      },
+    );
+
+    if (!setRegister) {
+      return NextResponse.json(
+        { error: "Error al crear el registro del cambio" },
+        { status: 500 },
+      );
+    }
     return NextResponse.json(employee, { status: 201 });
   } catch (error) {
     if (error instanceof Error) {
