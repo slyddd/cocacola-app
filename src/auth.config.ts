@@ -2,7 +2,6 @@ import credentials from "next-auth/providers/credentials";
 import axios, { Axios, AxiosError } from "axios";
 
 import type { NextAuthConfig, User } from "next-auth";
-import { LoginInterface } from "@/interfaces/loginInterface";
 
 export default {
   providers: [
@@ -17,13 +16,10 @@ export default {
         try {
           const {
             data: { user, accessToken },
-          } = await axios.post<LoginInterface>(
-            process.env.API_URL + "/auth/login",
-            {
-              email: credentials.email,
-              password: credentials.password,
-            },
-          );
+          } = await axios.post(process.env.API_URL + "/auth/login", {
+            email: credentials.email,
+            password: credentials.password,
+          });
 
           return {
             id: user.id,
