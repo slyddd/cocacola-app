@@ -30,13 +30,11 @@ export async function handleLogin({ email, password }: LoginProps) {
   } catch (error: any) {
     if (isRedirectError(error)) throw error;
     if (error instanceof AuthError) {
-      console.log(error);
       res = {
         ok: false,
         error: error.cause?.err?.message || error.message,
       };
     } else {
-      console.log(error);
       res = null;
     }
   }

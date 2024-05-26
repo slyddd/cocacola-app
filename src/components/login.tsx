@@ -51,7 +51,6 @@ export const Login = () => {
             });
 
             if (!res) {
-              setError("No se pudo iniciar sesion");
               setLoading(false);
               return;
             }

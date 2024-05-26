@@ -69,7 +69,7 @@ export const EmployeesTable = ({ registers: rows }: RegTableProps) => {
         selectionBehavior="replace"
         selectionMode="single"
         onRowAction={(row) => {
-          navigate(`/employees/edit/${row}`);
+          navigate(`/employee/edit/${row}`);
         }}
         sortDescriptor={list.sortDescriptor}
         onSortChange={list.sort}

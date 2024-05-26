@@ -29,7 +29,7 @@ export const Edit = ({ employee, admin }: EditProps) => {
   return (
     <div className="w-full">
       <Button
-        onClick={() => navigate("/employees")}
+        onClick={() => navigate("/employee")}
         startContent={<IoMdArrowRoundBack />}
         isIconOnly
       />

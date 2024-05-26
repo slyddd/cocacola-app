@@ -10,15 +10,21 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
   callbacks: {
-    async session({ token, session }) {
-      if (token.sub && session.user) session.user.id = token.sub;
+    async jwt({ token, user }) {
+      if (!token.sub) return token;
 
       const { data: admin } = await axios.get<AdminInterface>(
         process.env.API_URL + "/admin/" + token.sub,
       );
+      if (!admin) return token;
 
-      if (!admin) return session;
-      if (token.user) session.user = { ...session.user, ...admin };
+      token.user = { ...admin, password: undefined };
+      return token;
+    },
+    async session({ token, session }) {
+      if (!token.user) return session;
+      session.user = token.user as any;
+
       return session;
     },
   },

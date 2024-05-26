@@ -40,7 +40,7 @@ export const Add = ({ admin }: AddProps) => {
             })
             .finally(() => {
               setLoading(false);
-              navigate("/employees");
+              navigate("/employee");
             });
         })}
         className="mx-auto mt-5 grid w-full grid-cols-2 gap-5"

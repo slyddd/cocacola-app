@@ -34,7 +34,11 @@ export default async function RootLayout({ children }: RootLayoutProps) {
   const session = await auth();
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className="*:scrollbar *:scrollbar-hide"
+    >
       <head />
       <body
         className={clsx(
